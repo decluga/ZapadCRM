@@ -1,0 +1,17 @@
+﻿@using zapad.Public.WebInterface.Models.Tools;
+
+@{ 
+    string logoutLink = "";
+}
+<nav class="navbar navbar-inverse">
+    <div class="container">
+        <ul class="nav navbar-nav navbar-right" role="menu">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Иванов Александр<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="@(logoutLink)">Выйти</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

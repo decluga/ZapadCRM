@@ -1,0 +1,39 @@
+﻿@using zapad.Public.WebInterface.Models.Tools;
+@{
+    bool isMainPage = HelperCore.isMainPage();
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    @Html.Partial("Partial/Layout/_Head")
+
+    <!-- Render section "beforeHeadEnd" -->
+    @RenderSection("beforeHeadEnd", required: false)
+</head>
+<body>
+    <!-- Modal window main -->
+    <div id="modal-window-form-call"></div>
+
+    <!-- Header -->
+    <header class="b-header">
+        @Html.Partial("Partial/Layout/_Header")
+    </header>
+
+    <!-- Container -->
+    <div class="container b-container">
+        <!-- Main -->
+        <div class="col-md-12 b-main">
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="b-footer">
+        @Html.Partial("Partial/Layout/_Footer")
+    </footer>
+
+    <!-- Render section "beforeBodyEnd" -->
+    @RenderSection("beforeBodyEnd", required: false)
+</body>
+</html>

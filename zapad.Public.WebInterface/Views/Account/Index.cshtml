@@ -1,0 +1,575 @@
+﻿@using zapad.Public.WebInterface
+@using zapad.Public.WebInterface.Properties
+@using zapad.Public.WebInterface.Models.Authorization
+@model zapad.Public.WebInterface.Models.Authorization.AuthRegFormModel
+
+@{
+    Layout = null;
+}
+
+@{
+    ViewBag.Title = "Вход в систему";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    @Html.Partial("Partial/Layout/_Head")
+
+    <!-- Custom css -->
+    <link href="@Url.Content("~/Content/Login.css")" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <!-- Loader -->
+    <div id="wait"></div>
+
+    <!-- Modal window -->
+    <!--#region Fix Kendo.Mvc.UI -->
+    <div id="wMessage" style="display:none"><div></div></div>
+    <script>
+jQuery(function(){jQuery("#wMessage").kendoWindow({"modal":true,"iframe":false,"draggable":false,"pinned":false,"title":null,"resizable":false,"content":null,"width":300,"height":300,"actions":["Close"]});});
+    </script>
+    <!--#endregion-->
+
+    <div class="b-main">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="b-form-welcome-wrap">
+                        <div class="b-form-welcome-wrap-outer">
+                            <div class="b-form-welcome-wrap-inner">
+                                <ul id="welcome-tabs" class="nav nav-tabs" data-tabs="tabs">
+                                    <li class="active"><a href="#welcome-tabs-1" data-toggle="tab">Вход в личный кабинет</a></li>
+                                    <li><a href="#welcome-tabs-2" data-toggle="tab">Регистрация</a></li>
+                                </ul>
+                                <div id="welcome-tabs-content" class="tab-content">
+                                    <div class="tab-pane active" id="welcome-tabs-1">
+                                        <form id="frmLogin" class="form-horizontal" action="javascript:void(0);">
+                                            @Html.HiddenFor(m => m.tkn)
+
+                                            <div class="form-group">
+                                                <label for="login_Email" class="col-md-2 control-label">Электронная почта:*</label>
+                                                <div class="col-md-8">
+                                                    @Html.TextBoxFor(m => m.login_Email, new { @class = "k-textbox" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group hide">
+                                                <label for="login_SmsPwd" class="col-md-2 control-label">Sms Пароль:*</label>
+                                                <div class="col-md-8">
+                                                    @Html.TextBoxFor(m => m.login_SmsPwd, new { @class = "k-textbox" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="col-md-offset-2 col-md-10">
+                                                    <!--#region Fix Kendo.Mvc.UI -->
+                                                    <button id="bEnter">Войти</button>
+                                                    <script>
+	                                                jQuery(function(){jQuery("#bEnter").kendoButton({});});
+                                                    </script>
+                                                    <!--#endregion-->
+                                                </div>
+                                            </div>
+
+                                            <div class="errors">
+                                                @Html.ValidationMessageFor(m => m.login_Email)
+                                                @Html.ValidationMessageFor(m => m.login_SmsPwd)
+                                            </div>
+
+                                            <div class="b-additional-info">
+                                                <p>Пароль, присланный по sms является многоразовым. Однако в ряде случаев может быть установлено ограничение на число входов в систему по одному sms-паролю и/или на срок его действия.</p>
+                                                <p>Если срок действия sms-пароля истек и/или количество раз его использования исчерпано, после ввода Вашей электронной почты и sms-пароля Вы получите на Ваш телефон новый.</p>
+                                                <p>
+                                                    В случае ошибки набора пароля (за исключением случаев, когда на Ваш телефон прислан новый) каждая последующая попытка его ввода возможна только по истечении определенного
+                                                    интервала времени, увеличивающегося с каждой неудачной попыткой входа.
+                                                </p>
+                                                <p>При нескольких неудачных попыток входа Ваши реквизиты могут быть заблокированы вплоть до вмешательства группы технической поддержки.</p>
+                                                <p>Если Вы забыли пароль <a href="" id="forceSend">нажмите сюда</a> для его отправки на Ваш телефон.</p>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="tab-pane" id="welcome-tabs-2">
+                                        <form id="frmNewUser" class="form-horizontal" action="javascript:void(0);">
+                                            @Html.HiddenFor(m => m.tkn)
+
+                                            <div class="form-group">
+                                                <label for="reg_Email" class="col-md-2 control-label">Электронная почта:</label>
+                                                <div class="col-md-8">
+                                                    @Html.TextBoxFor(m => m.reg_Email, new { @class = "k-textbox" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="reg_Phone" class="col-md-2 control-label">Телефон:</label>
+                                                <div class="col-md-8">
+                                                    <!--#region Fix Kendo.Mvc.UI -->
+                                                    <input data-val="true" data-val-required="Введите Ваш телефон" id="reg_Phone" name="reg_Phone" value="+7" />
+                                                    <script>
+	                                                jQuery(function(){jQuery("#reg_Phone").kendoMaskedTextBox({"mask":"+7 (000) 000 - 00 - 00","rules":{}});});
+                                                    </script>
+                                                    <!--#endregion-->
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="reg_F" class="col-md-2 control-label">Фамилия:</label>
+                                                <div class="col-md-8">
+                                                    @Html.TextBoxFor(m => m.reg_F, new { @class = "k-textbox" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="reg_I" class="col-md-2 control-label">Имя:</label>
+                                                <div class="col-md-8">
+                                                    @Html.TextBoxFor(m => m.reg_I, new { @class = "k-textbox" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="reg_O" class="col-md-2 control-label">Отчество:</label>
+                                                <div class="col-md-8">
+                                                    @Html.TextBoxFor(m => m.reg_O, new { @class = "k-textbox" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="reg_BDate" class="col-md-2 control-label">Дата рождения:</label>
+                                                <div class="col-md-8">
+                                                    <!--#region Fix Kendo.Mvc.UI -->
+                                                    <input data-val="true" data-val-date="The field reg_BDate must be a date." id="reg_BDate" name="reg_BDate" type="date" />
+                                                    <script>
+                    	                            jQuery(function(){jQuery("#reg_BDate").kendoDatePicker({"culture":"ru-RU","format":"yyyy-MM-dd","min":new Date(1900,0,1,0,0,0,0),"max":new Date(2099,11,31,0,0,0,0)});});
+                                                    </script>
+                                                    <!--#endregion-->
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="reg_Pos" class="col-md-2 control-label">Должность:</label>
+                                                <div class="col-md-8">
+                                                    @Html.TextBoxFor(m => m.reg_Pos, new { @class = "k-textbox" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="reg_Org" class="col-md-2 control-label">Организация:</label>
+                                                <div class="col-md-8">
+                                                    @Html.TextBoxFor(m => m.reg_Org, new { @class = "k-textbox" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="col-md-2">
+                                                    @Html.frwdCaptcha("Заменить изображение", "Введите текст", Settings.Default.CaptchaLength, Settings.Default.CaptchaChars)
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <br><br><br>
+                                                    <!--#region Fix Kendo.Mvc.UI -->
+                                                    <button id="bReg">Зарегистрироваться</button>
+                                                    <script>
+	                                                jQuery(function(){jQuery("#bReg").kendoButton({"click":OnReg});});
+                                                    </script>
+                                                    <!--#endregion-->
+                                                </div>
+                                            </div>
+
+                                            <div class="errors">
+                                                @Html.ValidationMessageFor(m => m.reg_F)
+                                                @Html.ValidationMessageFor(m => m.reg_I)
+                                                @Html.ValidationMessageFor(m => m.reg_O)
+                                                @Html.ValidationMessageFor(m => m.reg_Pos)
+                                                @Html.ValidationMessageFor(m => m.reg_Org)
+                                            </div>
+
+                                            <div class="b-additional-info">
+                                                <p>Пожалуйста, заполните все поля.
+                                                <p>После этого Вам придет на Вашу электронную почту письмо для активации Ваших регистрационных данных.
+                                                <p>В момент активации электронной почты Вам будет предложено проверить номер Вашего телефона (на него придет sms с многоразовым паролем).
+                                                <p>Затем, через некоторое время с Вами свяжется специалист для окончательного включения Ваших регистрационных данных и начале работы в системе.
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <script type="text/javascript">
+                            jQuery(document).ready(function ($) {
+                                $('#welcome-tabs').tab();
+                            });
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    var $wMessage = $("#wMessage");
+
+    function changeStateLoader(state){
+        var $loader = $("#wait");
+        (state) ? $loader.show() : $loader.hide();
+    }
+
+    function showLoader(){
+        changeStateLoader(true);
+    }
+
+    function hideLoader(){
+        changeStateLoader(false);
+    }
+
+    function showMessage(title, content){
+        $wMessage.data("kendoWindow")
+            .title(title)
+            .content(content)
+            .center()
+            .open()
+        ;
+    }
+
+    function showInfoMessage(content){
+        showMessage("Сообщение", content);
+    }
+
+    function showErrorMessage(content){
+        showMessage("Ошибка", content);
+    }
+
+    function isValidString(str){
+        return ($.trim(str).length > 0) ? true : false;
+    }
+
+    function isValidEmail(email){
+        var regExp = new RegExp('^[a-z0-9]+(\.[_a-z0-9]+)*@@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})$', 'i');
+        return regExp.test(email);
+    }
+
+    function OnLoginStepOne() {
+        var email = $("#login_Email").val();
+
+        /** Check email is valid */
+        if(!isValidString(email)){
+            showErrorMessage("Поле Электронная почта обязательно для заполнения");
+            return;
+        }
+
+        if(!isValidEmail(email)){
+            showErrorMessage("Поле Электронная почта имеет неверный  формат");
+            return;
+        }
+
+        /** Show loader */
+        showLoader();
+
+        /** Disable button */
+        $("#bEnter").data("kendoButton").enable(false);
+
+        /** Get login password form group */
+        var $loginPwdFormGroup = $("#login_SmsPwd").closest(".form-group");
+
+        /// <summary>
+        /// Первый этап авторизации
+        /// </summary>
+        /// <param name="tkn" type="int">Токен</param>
+        /// <param name="email" type="string">Email</param>
+        /// <returns>
+        ///		<request name="rc" type="int">Код состояния ответа - если rc == 0, то ответ корректный, если нет, то произошла какая то ошибка</request>
+        ///		<request name="msg" type="string">Сообщение</request>
+        /// </returns>
+        $.ajax({
+            type: "POST",
+            data: { tkn: $("#frmLogin #tkn").val(), email: email },
+            url: "/Account/LoginStepOne/",
+            dataType: 'json',
+            success: function (result) {
+                /** Hide loader */
+                hideLoader();
+
+                /** Enable button */
+                $("#bEnter").data("kendoButton").enable(true);
+
+                switch (result.rc) {
+                  case 0:
+					/** Show message */
+                    showInfoMessage("Последний sms пароль актуален");
+
+					/** Show sms password */
+                    $loginPwdFormGroup.removeClass("hide");
+
+					/** Set step */
+                    $("#bEnter").attr("data-step", 2);
+                    break;
+                  case 4:
+					/** Show message */
+                    showInfoMessage("Электронная почта не активирована");
+                    break;
+                    case 5:
+                        /** Show message */
+                        showInfoMessage("Пользователь с такой электронной почтой не зарегистрирован");
+                        break;
+                  case 10:
+                  case 11:
+                  case 12:
+                  case 13:
+					/** Show message */
+                    showInfoMessage("Отправлен новый sms пароль");
+
+					/** Show sms password */
+                    $loginPwdFormGroup.removeClass("hide");
+
+					/** Set step */
+                    $("#bEnter").attr("data-step", 2);
+                    break;
+                  case 15:
+					/** Show message */
+                    showInfoMessage(result.msg);
+                    break;
+                }
+            },
+
+            error: function (request, status, error) {
+                /** Hide loader */
+                hideLoader();
+
+                /** Enable button */
+                $("#bEnter").data("kendoButton").enable(true);
+
+				/** Show message */
+                showErrorMessage("Неизвестная ошибка. Попробуйте повторить запрос позже.");
+            }
+        });
+    }
+
+    function OnLoginStepTwo() {
+        var email = $("#login_Email").val();
+        var smsPwd = $("#login_SmsPwd").val();
+
+        /** Check email is valid */
+        if(!isValidString(email)){
+            showErrorMessage("Поле Электронная почта обязательно для заполнения");
+            return;
+        }
+
+        if(!isValidEmail(email)){
+            showErrorMessage("Поле Электронная почта имеет неверный формат");
+            return;
+        }
+
+        /** Check sms password is valid */
+        if(!isValidString(smsPwd)){
+            showErrorMessage("Поле Sms Пароль обязательно для заполнения");
+            return;
+        }
+
+        /** Show loader */
+        showLoader();
+
+        /** Disable button */
+        $("#bEnter").data("kendoButton").enable(false);
+
+        /// <summary>
+        /// Вход в систему
+        /// </summary>
+        /// <param name="tkn" type="int">Токен</param>
+        /// <param name="email" type="string">Email</param>
+        /// <param name="sms" type="string">Sms пароль</param>
+        /// <returns>
+        ///		<request name="rc" type="int">Код состояния ответа - если rc == 0, то ответ корректный, если нет, то произошла какая то ошибка</request>
+        /// </returns>
+        $.ajax({
+            type: "POST",
+            data: { tkn: $("#frmLogin #tkn").val(), email: email, sms: smsPwd},
+            url: "/Account/LoginStepTwo/",
+            dataType: 'json',
+            success: function (result) {
+                /** Hide loader */
+                hideLoader();
+
+                switch (result.rc) {
+                    case 0:
+                        /** Redirect to auth page */
+                        window.location.replace("/Main/");
+
+                        break;
+                    case 1:
+                    case 2:
+                        /** Enable button */
+                        $("#bEnter").data("kendoButton").enable(true);
+
+                        /** Show message */
+                        showInfoMessage(result.msg);
+
+                        break;
+                    case 4:
+                        /** Enable button */
+                        $("#bEnter").data("kendoButton").enable(true);
+
+                        /** Show message */
+                        showInfoMessage("Учетная запись не подтверждена администратором");
+                        $wMessage.kendoWindow({
+                            close: function (e) {
+                                window.location.reload();
+                            }
+                        });
+
+                        break;
+                }
+            },
+            error: function (request, status, error) {
+                /** Hide loader */
+                hideLoader();
+
+                /** Enable button */
+                $("#bEnter").data("kendoButton").enable(true);
+
+				/** Show message */
+                showErrorMessage("Неизвестная ошибка. Попробуйте повторить запрос позже.");
+            }
+        });
+    }
+
+    function OnReg() {
+        var email = $("#reg_Email").val(),
+            phone = $("#reg_Phone").val(),
+            lastname = $("#reg_F").val(),
+            firstname = $("#reg_I").val(),
+            middlename = $("#reg_O").val()
+        ;
+
+        /** Check */
+        if (!isValidString(email)) {
+            showErrorMessage('Поле "Электронная почта" обязательно для заполнения');
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            showErrorMessage('Поле "Электронная почта" имеет неверный формат');
+            return;
+        }
+
+        if (!isValidString(phone)) {
+            showErrorMessage('Поле "Телефон" обязательно для заполнения');
+            return;
+        }
+
+        if (!isValidString(lastname)) {
+            showErrorMessage('Поле "Фамилия" обязательно для заполнения');
+            return;
+        }
+
+        if (!isValidString(firstname)) {
+            showErrorMessage('Поле "Имя" обязательно для заполнения');
+            return;
+        }
+
+        if (!isValidString(middlename)) {
+            showErrorMessage('Поле "Отчество" обязательно для заполнения');
+            return;
+        }
+
+
+
+            showLoader();
+            $("#bReg").data("kendoButton").enable(false);
+
+        /// <summary>
+        /// Получение и проверка регистрационных данных
+        /// </summary>
+        /// <param name="tkn" type="int">Токен</param>
+        /// <param name="reg_Email" type="string">Email</param>
+        /// <param name="reg_Phone" type="string">Телефон</param>
+        /// <param name="reg_F" type="string">Фамилия</param>
+        /// <param name="reg_I" type="string">Имя</param>
+        /// <param name="reg_O" type="string">Отчество</param>
+        /// <param name="reg_BDate" type="string">Дата рождения</param>
+        /// <param name="reg_Pos" type="string">Должность</param>
+        /// <param name="reg_Org" type="string">Организация</param>
+        /// <param name="captchaId" type="string">Captcha Id</param>
+        /// <param name="captchaInputText" type="string">Captcha текст</param>
+        /// <returns>
+        ///		<request name="code" type="int">Код состояния ответа - если rc == 0, то ответ корректный, если нет, то произошла какая то ошибка</request>
+        ///		<request name="message" type="string">Сообщение</request>
+        /// </returns>
+            $.ajax({
+                type: "POST",
+                //data: { Registration: $("#frmNewUser").serialize() },
+                url: "/Account/Registration?"+$("#frmNewUser").serialize(),
+                dataType: 'json',
+                success: function (result) {
+                    hideLoader();
+                    if (result.code == 0) {
+                        showInfoMessage(result.message);
+                        $wMessage.kendoWindow({
+                            close: function (e) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                    else {
+                        showInfoMessage(result.message);
+                        $("#bReg").data("kendoButton").enable(true);
+                    }
+                },
+                error: function (request, status, error) {
+                    hideLoader();
+                    showErrorMessage("Неизвестная ошибка. Попробуйте повторить запрос позже.");
+                }
+            });
+        }
+
+    $("#bEnter").click(function(e){
+        e.preventDefault();
+
+        if($("#bEnter").attr("data-step") == 2){
+            OnLoginStepTwo();
+        } else {
+            OnLoginStepOne();
+        }
+    });
+
+    $("#forceSend").click(function (e) {
+        e.preventDefault();
+
+        var email = $("#login_Email").val();
+
+        /** Check email is valid */
+        if(!isValidString(email)){
+            showErrorMessage("Поле Электронная почта обязательно для заполнения");
+            return;
+        }
+
+        if(!isValidEmail(email)){
+            showErrorMessage("Поле Электронная почта имеет неверный  формат");
+            return;
+        }
+
+        showLoader();
+        $("#forceSend").off("click");
+
+        /// <summary>
+        /// Восстановление пароля через sms
+        /// </summary>
+        /// <param name="tkn" type="int">Токен</param>
+        /// <param name="email" type="string">Email</param>
+        /// <returns>
+        ///		<request name="rc" type="int">Код состояния ответа - если rc == 0, то ответ корректный, если нет, то произошла какая то ошибка</request>
+        /// </returns>
+        $.ajax({
+            data: { tkn: $("#frmLogin #tkn").val(), email: email },
+            type: "POST",
+            url: "/Account/LostPwd/",
+            success: function (result) {
+                hideLoader();
+            },
+            error: function () {
+                hideLoader();
+                showErrorMessage("Внутренняя ошибка системы");
+            }
+        });
+    });
+    </script>
+</body>
+</html>

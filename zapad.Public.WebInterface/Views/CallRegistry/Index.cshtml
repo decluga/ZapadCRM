@@ -1,0 +1,127 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutTemplates/_1columns.cshtml";
+}
+
+<div class="b-block-message">
+    <div class="parent-service-message"></div>
+</div>
+
+<div class="b-content-item">
+    <h2 class="page-header">Колл центр: реестр звонков</h2>
+
+    <div class="b-content">        
+        <!--top filter bar-->
+        <div id="b-grid-filter">
+            <div class="row">
+                <form action="#" id="b-grid-filter-form">
+                    <div class="col-md-4">
+                        <div class="b-grid-filter-item">
+                            <input id="call-receiver" type="text" placeholder="Имя, телефон, организация" class="input-md w100p"/>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-primary b-btn-col b-btn-eq w100p" style="height: 30px;">Поиск</a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-primary b-btn-col b-btn-eq w100p" style="height: 30px; font-size: 12px;">Сбросить все фильтры</a>
+                    </div>
+                    <div class="col-md-2 pull-right">
+                        <a href="#" class="btn btn-primary b-btn-col b-btn-eq w100p" style="height: 30px;">Добавить запись</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="b-grid-container">
+            <div id="grid"></div>
+        </div>
+    </div>
+
+
+</div>
+
+<script>
+    $(function () {
+        var $gridContainer = $("#b-grid-container");
+
+        /** Init client profile modal window */
+        var $kendoModalWindow = App.Property.initProfileWindow();
+
+        /** Start preloader on load page */
+        kendo.ui.progress($gridContainer, true);
+
+        var $grid = $("#grid").kendoGrid({
+            dataSource: {
+                type: "json",
+                transport: {
+                    read: function (e) {
+                        e.success([]);
+                        kendo.ui.progress($gridContainer, false);
+                    }
+                }
+            },
+            columns: [
+                {
+                    field: "Phone",
+                    title: "Телефон",
+                    filterable: false,
+                    encoded: false,
+                },
+                {
+                    field: "Client",
+                    title: "Клиент",
+                    width: 125,
+                    filterable: false,
+                    encoded: false,
+                },
+                {
+                    field: "DateTime",
+                    title: "Дата и время",
+                    width: 130,
+                    filterable: false,
+                },
+                {
+                    field: "CallReceiver",
+                    title: "Кто принял",
+                    width: 125,
+                    filterable: false,
+                },
+                {
+                    field: "IsRepeatCall",
+                    title: "Повторный звонок",
+                    width: 125,
+                    filterable: false,
+                },
+                {
+                    field: "Status",
+                    title: "Статус",
+                    filterable: false,
+                    encoded: false,
+                },
+                {
+                    field: "CallResultType",
+                    title: "Результат",
+                    width: 95,
+                    filterable: false,
+                    encoded: false,
+                },
+                {
+                    field: "Department",
+                    title: "Отдел",
+                    width: 95,
+                    filterable: false,
+                    encoded: false,
+                },
+                {
+                    field: "DepartmentUser",
+                    title: "Назначенный сотрудник",
+                    width: 95,
+                    filterable: false,
+                    encoded: false,
+                }
+            ]
+        });
+    });
+</script>
+

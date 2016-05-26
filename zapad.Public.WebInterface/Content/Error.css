@@ -1,0 +1,13 @@
+﻿html, body {
+	height: 100%;
+}
+
+.b-main {
+    min-height: 100%;
+    background: #f2f3f7 url("../Images/bg-cranes.jpg") no-repeat 50% 100%;
+}
+
+.b-error-body {
+    text-align: center;
+    padding-top: 250px;
+}
