@@ -13,6 +13,12 @@ namespace zapad.crm.WebApiSync.Controllers
 {
     public class AccessController : ApiController
     {
+        // Получить права доступа к странице системы. Запрашивается с WebInterface
+        // <param name="pageId">Уникальный номер страницы (атрибут PageID метода контроллера)</param>
+        // <param name="sessionKey">Ключ текущей сессии пользователя для аутентификации и авторизации. Возвращать обратно без изменений</param>
+        // <param name="requestId">ID запроса для привязки ответа в конечной точке. Возвращать обратно без изменений</param>
+        // <returns> В ответе на запрос отправляет "ОК:: запрос получен и принят в обработку.
+        // Через SignalR возвращает структуру с правами доступа к объекту.</returns>
         [HttpGet]
         public async Task<XElement> Page(long pageId, string sessionKey, long requestId)
         {
@@ -32,8 +38,11 @@ namespace zapad.crm.WebApiSync.Controllers
             #endregion
         }
 
+        // Аналогично Page(long pageId, string sessionKey, long requestId), но предназначен для проверок на WebHostCache
+        // Результат должен отправляться в ответе на запрос, а не через SignalR
+        // Структура результата аналогична
         [HttpGet]
-        public XElement PageTransfer(long pageId)
+        public XElement PageTransfer(string sessionKey, long pageId)
         {
             #region Заглушка 
             return ReturnCodes.BuildRcAnswer(0, "Успешно",
