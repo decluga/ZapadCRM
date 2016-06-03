@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using System.Xml.Linq;
-using zapad.Public.WebInterface.Controllers;
 using zapad.Public.WebInterface.Models.ServiceInteraction;
 using zapad.Public.WebInterface.Models.Tools;
 
@@ -25,7 +25,7 @@ namespace zapad.Public.WebInterface.Models.Authorization
         /// <param name="session">Текущая сессия</param>
         /// <param name="Page">Контроллер, к которому идет обращение</param>
         /// <returns>true - пользовтель аутентифицирован, false - иначе</returns>
-        public static bool checkAuthentificate(out UserSessionSet.UserSession session, BaseController Page)
+        public static bool checkAuthentificate(out UserSessionSet.UserSession session, Controller Page)
         {
             session = UserSessionSet.Current.GetOrCreateSessionByCookie(Page.Request, Page.Response);
             try
@@ -54,9 +54,9 @@ namespace zapad.Public.WebInterface.Models.Authorization
 
             XElement access = service.GetPageAccessRules(Pages, session.Key.ToString());
 
-            if (access.Element("rc").getValue(5) == 0)
+            if (access.Element("Rc").getValue(5) == 0)
             {
-                ResultInfo = access.Element("Answer").Elements("item").Select(u => new ObjectAccessResult()
+                ResultInfo = access.Elements("Item").Select(u => new ObjectAccessResult()
                 {
                     Id = u.Element("Id").getValue(-1),
                     Access = new CheckAccessResult()

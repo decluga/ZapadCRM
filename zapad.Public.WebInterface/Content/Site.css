@@ -1,4 +1,9 @@
 ﻿/* Set padding to keep content from hitting the edges */
+html, 
+body {
+    height: 100%;
+}
+
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
@@ -39,4 +44,150 @@
 
 .b-grid-filter-item label:last-child {
     margin-right: 0;
+}
+
+.c-content {
+    height: 100%;
+    padding-top:10px;
+    background-color: #eee;
+    margin-right: 3px;
+    padding: 5px 10px;
+}
+
+.title-underlined {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.content{
+    padding-top: 10px;
+}
+
+    .c-filter .text {
+        font-size: 14px;
+    }
+
+.b-content-item {
+    margin-bottom: 20px;
+}
+
+.marketing-title{
+    font-weight:bold;
+    padding-top:10px;
+}
+
+.equal {
+  display: flex;
+  flex-wrap: wrap;
+}
+    
+.equal > div[class*='col-'] {  
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-heading [data-toggle="collapse"]:after
+{
+	font-family: 'Glyphicons Halflings';
+	content: "\e072";
+	float: right;
+	color: #b0c5d8;
+	font-size: 18px;
+	line-height: 22px;
+
+	-webkit-transform: rotate(-90deg);
+	-moz-transform:    rotate(-90deg);
+	-ms-transform:     rotate(-90deg);
+	-o-transform:      rotate(-90deg);
+	transform:         rotate(-90deg);
+}
+.panel-heading [data-toggle="collapse"].collapsed:after
+{
+	-webkit-transform: rotate(90deg);
+	-moz-transform:    rotate(90deg);
+	-ms-transform:     rotate(90deg);
+	-o-transform:      rotate(90deg);
+	transform:         rotate(90deg);
+}
+.container{ 
+    padding-top: 10px;
+    width:100% !important;
+}
+
+.size{
+}
+
+.k-multicheck-wrap .k-label {
+    font-weight: normal !important;
+}
+
+/**Call queue styles*/
+.call-queue{
+    position: fixed;
+    bottom: 0;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    z-index: 1003;
+    min-width: 750px;
+}
+@media (min-width: 768px) {
+  .call-queue {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .call-queue {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .call-queue {
+    width: 1170px;
+  }
+}
+
+.call-queue > .top{
+    overflow: hidden;
+    height: 30px;
+    background: #D8D8D8;
+}
+
+.call-queue > .bottom{
+    height: 30px;
+    background: #A8A8A8;
+}
+
+.call-queue a {
+    color: black;
+    text-decoration:underline;
+}
+
+.call-queue .label-more-calls{
+    margin-right: 10px;
+}
+
+.call-queue .toggle-hide-queue{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.call-queue 
+    .current-call-status,
+    .current-queue,
+    .line-indicator,
+    .bottom-right
+{
+        display: inline-block;
+        margin: 5px;
+}
+
+.current-queue ul{
+    margin: 5px;
+    display: inline;
+}
+
+.current-queue ul li{
+    display: inline;
 }

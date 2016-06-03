@@ -41,14 +41,15 @@ namespace zapad.Public.WebInterface.Models.Authorization
             /// Фильтр районов
             /// </summary>
             public List<long> FilterDistricts { get; set; } = new List<long>();
-            
+
             /// <summary>
             /// Связывание записи профиля пользователя с данным экземпляром сессии по заданному id
             /// </summary>
             /// <param name="id">id пользователя</param>
-            public void UserLink(int id)
+            /// <param name="sessionKey">Ключ текущей сессии</param>
+            public void UserLink(int id, string sessionKey)
             {
-                UserInfo[] rows = service.GetUsersById(id);
+                UserInfo[] rows = service.GetUsersById(id, sessionKey);
                 if (rows == null || rows.Length != 1) throw new HttpResponseException(HttpStatusCode.Forbidden);
                 this.User = rows[0];
             }

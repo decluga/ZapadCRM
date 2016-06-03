@@ -1,0 +1,53 @@
+﻿<div class="call-queue">
+    <div id="top-lane" class="top">
+        <div class="current-call-status">
+            <strong>На линии</strong>
+        </div>
+        <div class="current-queue pull-right">
+            <strong>Очередь ожидания</strong>
+            <ul>
+                <li>
+                    <img src="~/Images/phone.png"/>
+                    <span>+79561234545</span>
+                </li>
+                <li>
+                    <img src="~/Images/phone.png" />
+                    <span>+79331556677</span>
+                </li>
+                <li>
+                    <img src="~/Images/phone.png" />
+                    <span>+79331556677</span>
+                </li>
+            </ul>
+            <span class="label-more-calls">(Eще: 4)</span>
+            <span class="toggle-hide-queue">Скрыть</span>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="line-indicator">
+            <img src="~/Images/line-indicator/green.png" />
+            <span>Свободен</span>
+        </div>
+        <div class="bottom-right pull-right">
+            <span class="toggle-hide-queue hidden">Открыть</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.toggle-hide-queue').on('click', function (e) {
+        var topLaneElement = $("#top-lane");
+        if (topLaneElement.height() > 0)
+        {
+            topLaneElement.animate({ height: "0px" }, {
+                duration: 'slow', complete: function () {
+                    $('.toggle-hide-queue').toggleClass('hidden');
+                }
+            });
+        }
+        else {
+            topLaneElement.animate({ height: "30px" }, 'slow');
+            $('.toggle-hide-queue').toggleClass('hidden');
+        }
+    });
+</script>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Xml.Linq;
 using zapad.Public.WebInterface.Models.Authorization;
+using zapad.Public.WebInterface.Models.Tools;
 
 namespace zapad.Public.WebInterface.Models.ServiceInteraction
 {
@@ -13,6 +14,11 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
     public class WebHostCacheWrapper : IServiceAccess
     {
         /// <summary>
+        /// Значение кода результата для вызовов API по умолчанию
+        /// </summary>
+        private const int DEFAULT_RC = Int32.MaxValue;
+
+        /// <summary>
         /// Активировать email пользователя
         /// </summary>
         /// <param name="user">Пользователь, email которого нужно активировать</param>
@@ -20,8 +26,9 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// <returns>true - если пользователь активирован успешно, иначе - false</returns>
         public bool ActivateUserEmail(UserInfo user, string sessionKey)
         {
-            // POST /security/ActivateUserEmail
-            return true;
+            var request = ApiHelpers.BuildRequest(sessionKey, user.ToXElement());
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api\Security\ActivateUserEmail", request);
+            return (result.Element("Rc").getValue(DEFAULT_RC) == 0);
         }
 
         /// <summary>
@@ -33,21 +40,24 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// <returns></returns>
         public XElement ActivateUserPhone(UserInfo user, string sessionKey, string smsPassword)
         {
-            // POST /security/ActivateUserPhone
-
-            return new XElement("rc", 0);
+            var request = ApiHelpers.BuildRequest(sessionKey, user.ToXElement(), new XElement("smsPassword", smsPassword));
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\ActivateUserPhone", request);
+            return result;
         }
 
         /// <summary>
         /// Добавить в систему нового пользователя
         /// </summary>
         /// <param name="user">Добавляемый пользователь</param>
+        /// <param name="sessionKey">Ключ текущей сессии</param>
         /// <returns>Добавленный пользователь</returns>
-        public UserInfo AddUser(UserInfo user)
+        public UserInfo AddUser(UserInfo user, string sessionKey)
         {
-            // POST /security/AddUser
+            var request = ApiHelpers.BuildRequest(sessionKey, user.ToXElement());
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\AddUser", request);
+            user.FromXElement(result.Element("UserInfo"));
 
-            return new UserInfo();
+            return user;
         }
 
         /// <summary>
@@ -58,33 +68,32 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// <returns>Результат проверки</returns>
         public XElement CheckSmsPassword(string sessionKey, string smsPassword)
         {
-            // GET /security/CheckSmsPassword
-
-            return new XElement("rc", 0);
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\CheckSmsPassword?sessionKey=" + sessionKey + "&smsPassword=" + smsPassword);
+            return result;
         }
 
         /// <summary>
         /// Получить пользователей, зарегистрированных под указанным email
         /// </summary>
         /// <param name="email">email для поиска</param>
+        /// <param name="email">Ключ текущей сессии</param>
         /// <returns>Массив записей пользователей</returns>
-        public UserInfo[] GetUsersByEmail(string email)
+        public UserInfo[] GetUsersByEmail(string email, string sessionKey)
         {
-            // GET /security/GetUsersByEmail
-
-            return new UserInfo[] { new UserInfo() };
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\GetUsersByEmail?email=" + email + "&sessionKey=" + sessionKey);
+            return ApiHelpers.ExtractUserArray(result);
         }
 
         /// <summary>
         /// Получить пользователей по ID
         /// </summary>
         /// <param name="id">ID для поиска</param>
+        /// <param name="sessionKey">Ключ текущей сессии</param>
         /// <returns>Массив записей пользователей</returns>
-        public UserInfo[] GetUsersById(int id)
+        public UserInfo[] GetUsersById(int id, string sessionKey)
         {
-            // GET /security/GetUsersById
-
-            return new UserInfo[] { new UserInfo() };
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\GetUsersById?id=" + id + "&sessionKey=" + sessionKey);
+            return ApiHelpers.ExtractUserArray(result);
         }
 
         /// <summary>
@@ -95,21 +104,8 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// <returns>Результат запроса</returns>
         public XElement RequestLostPasswordRestore(int userId, string sessionKey)
         {
-            // GET /security/RequestLostPasswordRestore
-
-            return new XElement("rc", 0);
-        }
-
-        /// <summary>
-        /// Запросить повторную отправку пароля
-        /// </summary>
-        /// <param name="sessionKey">Ключ текущей сессии</param>
-        /// <returns>Результат запроса</returns>
-        public XElement RequestResendPassword(string sessionKey)
-        {
-            // GET /security/RequestResendPassword
-
-            return new XElement("rc", 0);
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\RequestLostPasswordRestore?userId=" + userId + "&sessionKey=" + sessionKey);
+            return result;
         }
 
         /// <summary>
@@ -120,9 +116,8 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// <returns>Результат запроса</returns>
         public XElement RequestSmsPassword(int userId, string sessionKey)
         {
-            // GET /security/RequestSmsPassword
-
-            return new XElement("rc", 0);
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\RequestSmsPassword?userId=" + userId + "&sessionKey=" + sessionKey);
+            return result;
         }
 
         /// <summary>
@@ -131,25 +126,30 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// <param name="sessionKey">Ключ сессии</param>
         public void UpdateAnonymousSession(string sessionKey)
         {
-            // POST /security/UpdateAnonymousSession
+            var request = ApiHelpers.BuildRequest(sessionKey);
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api/security/UpdateAnonymousSession", request);
         }
 
         /// <summary>
         /// Обновить поле IsAcceptAdmin пользователя
         /// </summary>
         /// <param name="userId">ID пользователя</param>
-        public void UpdateUserAcceptAdmin(int userId)
+        /// <param name="sessionKey">Ключ текущей сессии</param>
+        public void UpdateUserAcceptAdmin(int userId, string sessionKey)
         {
-            // POST /security/UpdateUserAcceptAdmin
+            var request = ApiHelpers.BuildRequest(sessionKey, new XElement("userId", userId));
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\UpdateUserAcceptAdmin", request);
         }
 
         /// <summary>
         /// Обновить метку последней активности пользователя
         /// </summary>
         /// <param name="userId">ID пользователя</param>
-        public void UpdateUserLastActivity(int userId)
+        /// <param name="sessionKey">Ключ текущей сессии</param>
+        public void UpdateUserLastActivity(int userId, string sessionKey)
         {
-            // POST /security/UpdateUserLastActivity
+            var request = ApiHelpers.BuildRequest(sessionKey, new XElement("userId", userId));
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\UpdateUserLastActivity", request);
         }
 
         /// <summary>
@@ -160,9 +160,17 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// <returns>права доступа</returns>
         public XElement GetPageAccessRules(long pageId, string sessionKey)
         {
-            // GET /security/GetPageAccessRules
+            var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\GetPageAccessRules?pageId=" + pageId + "&sessionKey=" + sessionKey);
+            return result;            
+        }
 
-            return new XElement("rc", 0);
+        /// <summary>
+        /// Выполнить выход пользователя
+        /// </summary>
+        /// <param name="sessionKey">Ключ текущей сессии</param>
+        public void Logout(string sessionKey)
+        {
+            var result = WebHostCache.Current.GetResponse<XElement>("api/security/logout?sessionKey=" + sessionKey);
         }
     }
 }

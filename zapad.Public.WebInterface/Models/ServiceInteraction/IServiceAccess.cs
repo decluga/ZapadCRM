@@ -23,15 +23,17 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// Получить пользователей, зарегистрированных под указанным email
         /// </summary>
         /// <param name="email">email для поиска</param>
+        /// <param name="sessionKey">Ключ текущей сессии</param>
         /// <returns>Массив записей пользователей</returns>
-        UserInfo[] GetUsersByEmail(string email);
+        UserInfo[] GetUsersByEmail(string email, string sessionKey);
 
         /// <summary>
         /// Получить пользователей по ID
         /// </summary>
         /// <param name="id">ID для поиска</param>
+        /// <param name="sessionKey">Ключ текущей сессии</param>
         /// <returns>Массив записей пользователей</returns>
-        UserInfo[] GetUsersById(int id);
+        UserInfo[] GetUsersById(int id, string sessionKey);
 
         /// <summary>
         /// Активировать email пользователя
@@ -70,7 +72,8 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// Обновить поле IsAcceptAdmin пользователя
         /// </summary>
         /// <param name="userId">ID пользователя</param>
-        void UpdateUserAcceptAdmin(int userId);
+        /// <param name="sessionKey">Ключ текущей сессии</param>
+        void UpdateUserAcceptAdmin(int userId, string sessionKey);
 
         /// <summary>
         /// Запросить восстановление забытого/утерянного пароля
@@ -84,28 +87,29 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// Обновить метку последней активности пользователя
         /// </summary>
         /// <param name="userId">ID пользователя</param>
-        void UpdateUserLastActivity(int userId);
-
-        /// <summary>
-        /// Запросить повторную отправку пароля
-        /// </summary>
         /// <param name="sessionKey">Ключ текущей сессии</param>
-        /// <returns>Результат запроса</returns>
-        XElement RequestResendPassword(string sessionKey);
+        void UpdateUserLastActivity(int userId, string sessionKey);
 
         /// <summary>
         /// Добавить в систему нового пользователя
         /// </summary>
         /// <param name="user">Добавляемый пользователь</param>
+        /// <param name="sessionKey">Ключ текущей сессии</param>
         /// <returns>Добавленный пользователь</returns>
-        UserInfo AddUser(UserInfo user);
+        UserInfo AddUser(UserInfo user, string sessionKey);
 
         /// <summary>
         /// Запросить права доступа к странице
         /// </summary>
         /// <param name="pageId">ID страницы</param>
         /// <param name="sessionKey">Ключ текущей сессии</param>
-        /// <returns></returns>
+        /// <returns>Статус операции</returns>
         XElement GetPageAccessRules(long pageId, string sessionKey);
+
+        /// <summary>
+        /// Выполнить выход пользователя
+        /// </summary>
+        /// <param name="sessionKey">Ключ текущей сессии</param>
+        void Logout(string sessionKey);
     }
 }

@@ -1,0 +1,284 @@
+﻿@using zapad.Public.WebInterface.Models.Tools;
+@{
+    Layout = "~/Views/Shared/LayoutTemplates/_2columns-fluid.cshtml";
+}
+
+@{ 
+    string phone = ViewBag.phone.ToString();
+    string FIO = ViewBag.FIO.ToString();
+    List<Marketing> Marketing = ViewBag.Marketing;
+    List<Marketing> Advertising = ViewBag.Advertising;
+
+}
+
+    <h2 class="page-header">Колл центр: входящий звонок</h2>
+    <div class="row equal">
+        <div class="col-md-4">
+                <div class="well">
+                    <div class="title-underlined">Информация о клиенте</div>
+                        <div class="col-md-2">Телефон</div>
+                        <div class="col-md-10 text text-left">@phone</div>
+                        <div class="col-md-2">ФИО</div>
+                        <div class="col-md-10 text text-left">@FIO</div>
+                        <div class="col-md-2">Звонок</div>
+                        <div class="col-md-10">
+                            <label class="radio-inline text-left">
+                                <input type="radio" name="call" value="1" class="left">Первый раз
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="call" value="0" class="left">Повторно
+                            </label>
+                        </div>
+                </div>
+                 <div class="well resize">
+                    <div class="title-underlined">Откуда вы узнали о нас?</div>
+                    <div class="row">
+                        @foreach (Marketing media in Marketing)
+                        {
+                             <div class="col-md-6">
+                                <div class="marketing-title">@(media.title)</div>
+                                @foreach (string elem in media.element)
+                                {
+                                    <div>
+                                        <input type="checkbox">@(elem)
+                                    </div>
+                                }
+                            </div>
+                        }
+                        <div class="col-md-6 content">
+                            <div>
+                                <input type="checkbox">Другое
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="col-md-4">
+            <div class="well size">
+                    <div class="title-underlined">Рекламная компания</div>
+                        @foreach (Marketing advert in Advertising)
+                        {
+                            <div class="marketing-title">@(advert.title)</div>
+                            foreach (string elem in advert.element)
+                            {
+                                <div>
+                                    <input type="checkbox">@(elem)
+                                </div>
+                            }
+                        }
+                </div>
+        </div>
+        <div class="col-md-4">
+            <div class="well size">
+                <div class="title-underlined">Перевести звонок</div>
+                <div class="container">
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                        122 ОП 3-1
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    ...
+                                </div>
+                            </div>
+                        </div> <!-- .panel -->
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                        122 ОП 3-2
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseTwo" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    ...
+                                </div>
+                            </div>
+                        </div> <!-- .panel -->
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                                        Отделы
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseThree" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    ...
+                                </div>
+                            </div>
+                        </div> <!-- .panel -->
+                    </div> <!-- .panel-group -->
+                </div> <!-- .container -->
+                </div>
+            </div>
+        </div>
+@Html.Partial("Partial/Page/CallQueuePartial")
+<script>
+    $(document).ready(function () {
+        var heights = $(".well").map(function () {
+            return $(this).height();
+        }).get(),
+        pos = $(".resize").map(function () {
+            return $(this).position();
+        }).get(),
+        maxHeight = Math.max.apply(null, heights);
+
+        $(".size").height(maxHeight);
+        $(".resize").height(maxHeight - pos[0].top);
+    });
+</script>
+
+            @*<div class="form-group">
+                <label for="@(roomsProperty.Id)">@(roomsProperty.GroupTitle)</label><br>
+                @CustomHelpers.RenderRooms(roomsProperty)
+            </div>
+
+            <div class="form-group">
+                <label for="@(areaProperty.Id)">@(areaProperty.GroupTitle)</label><br>
+                @CustomHelpers.RenderArea(areaProperty)
+            </div>
+
+            <div class="form-group">
+                <div class="b-custom-price-range">
+                    <label>Бюджет</label><br>
+                    @CustomHelpers.RenderBudget(budgetProperty)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <!-- Razor -->
+                <label for="@(payProperty.Id)">@(payProperty.GroupTitle)</label>
+
+                <div class="row">
+                    @{
+                        foreach (PropertyElement payPropertyElement in payProperty.Elements.Order())
+                        {
+                            @CustomHelpers.RenderPay(payPropertyElement, payProperty)
+                        }
+                    }
+                </div>
+                <!-- Razor -->
+            </div>*@
+            @*</div>
+                </div>
+            </div>*@
+
+            @*<div class="col-md-4">
+                <div class="b-content-item b-sidebar-call-client">
+                    <h2 class="page-header">Клиент</h2>
+
+                    <div class="b-content">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-remove phone-state hide"></span>
+                                        </span>
+                                        <input type="text" class="form-control" placeholder="Телефон" name="phone">
+                                    </div>
+                                    <input type="hidden" name="peopleid" value="" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Фамилия" name="lastname">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Имя" name="firstname">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Отчество" name="middlename">
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <label>Дополнительные контакты</label>
+                            <div class="contact-list-call"></div>
+                            <input type="hidden" name="cids" value="" />
+                        </div>
+
+                        <div class="form-group">
+                            <textarea class="form-control" rows="3" placeholder="Комментарий для клиента" name="client_comment"></textarea>
+                        </div>
+
+                        <div class="b-content-item b-client-history hide">
+                            <h4>История обращений</h4>
+
+                            <div class="b-content">
+                                <p>Отсутствует</p>
+                            </div>
+                        </div>
+
+                        <div class="b-content-item b-client-flat-state-history hide">
+                            <h4>История Бронь/Предбронь</h4>
+
+                            <div class="b-content">
+                                <p>Отсутствует</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+
+            @*<div class="col-md-4">
+                <div class="b-content-item b-sidebar-meet">
+                    <h2 class="page-header">Встреча</h2>
+
+                    <div class="b-content">
+                        <div class="form-group">
+                            <input name="meet_date" class="form-control" placeholder="Дата встречи" />
+                        </div>
+
+                        <div class="form-group">
+                            <textarea class="form-control" rows="3" placeholder="Комментарий для встречи" name="meet_comment"></textarea>
+                        </div>
+
+                        <div class="b-meet-failure">
+                            <div class="form-group">
+                                <input name="meet_failure_date" class="form-control" placeholder="Дата следующего контакта" />
+                            </div>
+
+                            <div class="form-group">
+                                <textarea class="form-control" rows="3" placeholder="Причина отказа от встречи" name="meet_failure_reason"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="b-content-item b-sidebar-marketing">
+                    <h2 class="page-header">Маркетинг</h2>
+
+                    <div class="b-content">
+
+                    </div>
+                </div>
+
+
+            </div>*@
+            @*</div>
+            </div>*@
+
+

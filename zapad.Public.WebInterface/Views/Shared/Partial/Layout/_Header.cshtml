@@ -1,13 +1,15 @@
 ﻿@using zapad.Public.WebInterface.Models.Tools;
+@using zapad.Public.WebInterface.Models.Authorization;
 
 @{ 
-    string logoutLink = "";
+    UserInfo userinfo = (UserInfo)this.ViewBag.userinfo;
+    string logoutLink = "/Account/Logout";
 }
 <nav class="navbar navbar-inverse">
     <div class="container">
         <ul class="nav navbar-nav navbar-right" role="menu">
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Иванов Александр<b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">@(String.Format("{0} {1}.{2}.", userinfo.F, userinfo.I[0], userinfo.O[0]))<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     <li><a href="@(logoutLink)">Выйти</a></li>
                 </ul>

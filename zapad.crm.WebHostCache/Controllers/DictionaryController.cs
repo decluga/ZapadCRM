@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Filters;
 using System.Xml.Linq;
+using zapad.crm.WebHostCache.Filters;
+using zapad.crm.WebHostCache.Models.Tools;
+using zapad.Public.WebInterface.Models.Authorization;
 
 namespace zapad.crm.WebHostCache.Controllers
 {
+    [AuthorizationFilter]
     public class DictionaryController : ApiController
     {
         #region Справочник "Периоды звоноков"
@@ -14,10 +19,10 @@ namespace zapad.crm.WebHostCache.Controllers
         /// Id, Name, Timespan
         /// </summary>
         /// <returns></returns>
-        [Route("GetCallPeriods"), HttpGet]
-        public async Task<XElement> GetCallPeriods()
+        [Route("GetCallPeriods"), HttpGet, PageID(201)]
+        public async Task<XElement> GetCallPeriods(string sessionKey, long requestId)
         {
-            throw new NotImplementedException();
+            return WebApiSync.Current.GetResponse<XElement>(@"api\Dictionary\GetCallPeriods?sessionKey=" + sessionKey + "&requestId=" + requestId);
         }
         #endregion
         #endregion
@@ -29,10 +34,10 @@ namespace zapad.crm.WebHostCache.Controllers
         /// Id, Name
         /// </summary>
         /// <returns></returns>
-        [Route("GetCallStatuses"), HttpGet]
-        public async Task<XElement> GetCallStatuses()
+        [Route("GetCallStatuses"), HttpGet, PageID(202)]
+        public async Task<XElement> GetCallStatuses(string sessionKey, long requestId)
         {
-            throw new NotImplementedException();
+            return WebApiSync.Current.GetResponse<XElement>(@"api\Dictionary\GetCallStatuses?sessionKey=" + sessionKey + "&requestId=" + requestId);
         }
         #endregion
         #endregion
@@ -44,10 +49,10 @@ namespace zapad.crm.WebHostCache.Controllers
         /// Id, Name
         /// </summary>
         /// <returns></returns>
-        [Route("GetCallResultTypes"), HttpGet]
-        public async Task<XElement> GetCallResultTypes()
+        [Route("GetCallResultTypes"), HttpGet, PageID(203)]
+        public async Task<XElement> GetCallResultTypes(string sessionKey, long requestId)
         {
-            throw new NotImplementedException();
+            return WebApiSync.Current.GetResponse<XElement>(@"api\Dictionary\GetCallResultTypes?sessionKey=" + sessionKey + "&requestId=" + requestId);
         }
         #endregion
         #endregion
@@ -59,10 +64,10 @@ namespace zapad.crm.WebHostCache.Controllers
         /// Id, Name
         /// </summary>
         /// <returns></returns>
-        [Route("GetDepartments"), HttpGet]
-        public async Task<XElement> GetDepartments()
+        [Route("GetDepartments"), HttpGet, PageID(204)]
+        public async Task<XElement> GetDepartments(string sessionKey, long requestId)
         {
-            throw new NotImplementedException();
+            return WebApiSync.Current.GetResponse<XElement>(@"api\Dictionary\GetDepartments?sessionKey=" + sessionKey + "&requestId=" + requestId);
         }
         #endregion
         #endregion

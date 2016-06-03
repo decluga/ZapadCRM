@@ -1,0 +1,48 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="zapad.crm.WebHostCache.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="WebApiSyncUrls" Type="System.Xml.XmlDocument" Scope="Application">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;ChannelsList&gt;&lt;channel priority="1" bandwith="2"&gt;http://localhost:9095&lt;/channel&gt;&lt;/ChannelsList&gt;</Value>
+    </Setting>
+    <Setting Name="msFlushAuditInterval" Type="System.Int64" Scope="Application">
+      <Value Profile="(Default)">15000</Value>
+    </Setting>
+    <Setting Name="SmsCodeLength" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">6</Value>
+    </Setting>
+    <Setting Name="ServiceEndPointTypeId" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="ServiceEndPointInstanceCode" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="DefaultIncorrectPasswordLimit" Type="System.Byte" Scope="Application">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="DefaultCountSmsCodeTry" Type="System.Byte" Scope="Application">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="DefaultCountSmsCodeDay" Type="System.Byte" Scope="Application">
+      <Value Profile="(Default)">7</Value>
+    </Setting>
+    <Setting Name="GCtimeout" Type="System.Int64" Scope="Application">
+      <Value Profile="(Default)">600000</Value>
+    </Setting>
+    <Setting Name="ADdomain" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ulzapad</Value>
+    </Setting>
+    <Setting Name="ADdefaultOU" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">OU=ulzapad_users,DC=intra, DC=ulzapad, DC=ru</Value>
+    </Setting>
+    <Setting Name="ADdefaultRootOU" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">OU=ulzapad_users,DC=intra, DC=ulzapad, DC=ru</Value>
+    </Setting>
+    <Setting Name="ReportPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\\Reports\\</Value>
+    </Setting>
+    <Setting Name="msSessionLifiTime" Type="System.Int64" Scope="Application">
+      <Value Profile="(Default)">109000000</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

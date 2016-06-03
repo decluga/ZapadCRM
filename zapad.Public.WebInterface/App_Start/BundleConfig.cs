@@ -40,7 +40,9 @@ namespace zapad.Public.WebInterface
 
             // App JS
             bundles.Add(new ScriptBundle("~/Scripts/AppJS").Include(
-                "~/Scripts/app/property.js"
+                "~/Scripts/app/property.js",
+                "~/Scripts/app/helpers.js",
+                "~/Scripts/app/message.js"
             ));
 
             // ThirdParty JS

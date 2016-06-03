@@ -1,0 +1,116 @@
+﻿@model zapad.Public.WebInterface.Models.Authorization.ActivateEMailModel
+
+@{
+    Layout = null;
+}
+
+@{ 
+    ViewBag.Title = "Активация номера телефона";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    @Html.Partial("Partial/Layout/_Head")
+</head>
+<body>
+    <header></header>
+
+    <div id="wait" style="position: fixed; left: 50%; top: 50%; width: 100px; height: 100px; margin-left: -50px; margin-top: -50px; display: none; z-index: 100;"><img src="\Images\wait.gif" /></div>
+    
+    <!--#region Fix Kendo.Mvc.UI -->
+    <div id="wMessage" style="display:none"><div></div></div>
+    <script>
+	    jQuery(function(){jQuery("#wMessage").kendoWindow({"modal":true,"iframe":false,"draggable":false,"pinned":false,"title":"Сообщение","resizable":false,"content":null,"width":300,"height":300,"actions":["Close"]});});
+    </script>
+    <!--#endregion-->
+
+    <!--#region Fix Kendo.Mvc.UI -->
+    <div id="wError" style="display:none"><div></div></div>
+    <script>
+	    jQuery(function(){jQuery("#wError").kendoWindow({"modal":true,"iframe":false,"draggable":false,"pinned":false,"title":"Ошибка","resizable":false,"content":null,"width":300,"height":300,"actions":["Close"]});});
+    </script>
+    <!--#endregion-->
+
+    @Html.HiddenFor(m => m.tkn)
+    <div style="position:relative;">
+        <form id="main" action="javascript:void(0)" style="width: 320px; height: 320px; position: fixed; left: 50%; top: 50%; margin-left: -160px; margin-top: -160px; border: double indigo; padding: 10px;">
+            <p style="text-align: center; "><big><strong>Уважаемый @Model.User.F @Model.User.I @Model.User.O!</strong></big></p>
+            <p>Ваша электронная почта @Model.User.EMail успешно активирована.</p>
+            <p>Введите код, пришедший на Ваш мобильный телефон посредством SMS:</p>
+            @Html.TextBoxFor(m => m.SmsPwd, new { @class = "k-textbox" })
+            <br />
+
+            <!--#region Fix Kendo.Mvc.UI -->
+            <button id="bSend" style="margin-top: 30px; width: 293px;">Продолжить регистрацию</button>
+            <script>
+                jQuery(function () { jQuery("#bSend").kendoButton({ "click": OnSend }); });
+            </script>
+            <!--#endregion-->
+        </form> 
+    </div>
+    <style>
+        .captchaInput {
+            margin-left: 200px;
+            margin-top: -75px;
+        }
+        #SmsPwd {
+            width:100px;
+        }
+    </style>
+    <script>
+        function OnSend() {
+            $("#wait").show();
+            $("#bSend").data("kendoButton").enable(false);
+
+            /// <summary>
+            /// Активация номера телефона
+            /// </summary>
+            /// <param name="tkn" type="int">Токен</param>
+            /// <param name="smspwd" type="string">Sms пароль</param>
+            /// <returns>
+            ///		<request name="code" type="int">Код состояния ответа - если rc == 0, то ответ корректный, если нет, то произошла какая то ошибка</request>		
+            ///		<request name="message" type="string">Сообщение</request>
+            /// </returns>
+            $.ajax({
+                url: "/Account/ActivatePhone?tkn=" + $("#tkn").val() + "&smspwd=" + $("#SmsPwd").val(),
+                dataType: 'json',
+                success: function (result) {
+                    $("#wait").hide();
+                    if (result.code == 0) {
+                        var message = "Подтверждение Вашего номера прошло успешно. <br /> Ваш запрос отправлен в техническую поддержку. <br /> В ближайшее время с Вами свяжется специалист для продолжения Вашей работы."
+                        $("#wMessage").data("kendoWindow").content(message).center().open();
+                        $("#wMessage").kendoWindow({
+                            close: function (e) {
+                                window.close()
+                            }
+                        });
+                    }
+                    else {
+                        var message = "Неизвестная ошибка";
+                        switch (result.code) {
+                            case 2: message = "Укажите код, пришедший на Ваш мобильный телефон";
+                                break;
+                            default: message = result.message;
+                                break;
+                        }
+                        $("#wError").data("kendoWindow").content(message).center().open();
+                        $("#bSend").data("kendoButton").enable(true);
+                    }
+                },
+                error: function (request, status, error) {
+                    $("#wait").hide();
+                    $("#wError").data("kendoWindow").content("Неизвестная ошибка. Попробуйте повторить запрос позже.").center().open();
+                    $("#wError").kendoWindow({
+                        close: function (e) {
+                            window.location.reload();
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+    <footer></footer>
+</body>
+</html>

@@ -21,12 +21,6 @@ namespace zapad.Public.WebInterface.Controllers
         protected UserSessionSet.UserSession session;
 
         /// <summary>
-        /// Словарь для указания соответствий между методами контроллера и ID соответствующих страниц
-        /// Должен заполняться в каждом контроллере отдельно
-        /// </summary>
-        protected Dictionary<string, long> pageIDs = new Dictionary<string, long>();
-
-        /// <summary>
         /// Проверка доступа для текущего пользователя: должен быть аутентифицирован, должны быть права на данное действие
         /// </summary>
         /// <param name="filterContext">Контекст авторизации</param>
@@ -42,18 +36,36 @@ namespace zapad.Public.WebInterface.Controllers
             }
 
             // Проверяем права доступа к данному объекту
-            string actionName = filterContext.RouteData.GetRequiredString("action");
-            bool readAccess = false;
-            if (pageIDs.ContainsKey(actionName))
-            {
-                ObjectAccessResult AccessInfo = Authentificate.checkAuthorization(this.session, pageIDs[actionName]);
-                readAccess = AccessInfo.Access.Read;                
-            }
-            if (!readAccess)
+            bool access = CheckAccess(filterContext);
+            if (!access)
             {
                 filterContext.Result = View("Error/Error403");
                 return;
             }
+
+            // Обеспечиваем корректный вывод имени текущего пользователя в меню системы
+            this.ViewBag.userinfo = this.session.User;
+        }
+
+        /// <summary>
+        /// Проверяет права доступа к запрашиваемому действию
+        /// </summary>
+        /// <param name="filterContext">Контекст запроса</param>
+        /// <returns>true - доступ разрешен, false - иначе</returns>
+        private bool CheckAccess(AuthorizationContext filterContext)
+        {
+            var actionName = filterContext.ActionDescriptor.ActionName;
+            var methodInfo = filterContext.Controller.GetType().GetMethod(actionName);
+            var attr = Attribute.GetCustomAttribute(methodInfo, typeof(PageIDAttribute)) as PageIDAttribute;
+
+            long pageId = -1;
+            if (attr != null)
+                pageId = attr.PageID;
+            
+            ObjectAccessResult AccessInfo = Authentificate.checkAuthorization(this.session, pageId);
+            bool readAccess = AccessInfo.Access.Read;
+
+            return readAccess;
         }
     }
 }

@@ -46,7 +46,7 @@
       <Value Profile="(Default)">30</Value>
     </Setting>
     <Setting Name="domainName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">localhost:9050</Value>
+      <Value Profile="(Default)">localhost:3275</Value>
     </Setting>
     <Setting Name="msTimerItervalSyncStates" Type="System.Int64" Scope="Application">
       <Value Profile="(Default)">1800000</Value>
@@ -59,6 +59,15 @@
     </Setting>
     <Setting Name="minuteDeadlineFrozenStates" Type="System.Int64" Scope="Application">
       <Value Profile="(Default)">-20</Value>
+    </Setting>
+    <Setting Name="WebHostCacheUrls" Type="System.Xml.XmlDocument" Scope="Application">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ChannelsList&gt;
+  &lt;channel priority="1" bandwith="2"&gt;http://localhost:9094&lt;/channel&gt;
+&lt;/ChannelsList&gt;</Value>
+    </Setting>
+    <Setting Name="ResponseHubUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:9094/signalr</Value>
     </Setting>
   </Settings>
 </SettingsFile>

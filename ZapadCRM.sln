@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zapad.Public.WebInterface", "zapad.Public.WebInterface\zapad.Public.WebInterface.csproj", "{55D2A711-C3F3-4C99-8F33-EA6B24047B0E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zapad.crm.WebHostCache", "zapad.crm.WebHostCache\zapad.crm.WebHostCache.csproj", "{B7823DFE-6807-4E0D-BA0D-7EDAD2BC8488}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSync", "WebApiSync\WebApiSync.csproj", "{08692295-A0DB-4E50-BB48-AFC010D03C38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zapad.crm.WebApiSync", "zapad.crm.WebApiSync\zapad.crm.WebApiSync.csproj", "{736E0489-4CA1-4599-A09A-BC7EC1DBA48A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zapad.Model", "zapad.Model\zapad.Model.csproj", "{7BF5BA8F-136B-4C97-919A-A3355A1F6D32}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{B7823DFE-6807-4E0D-BA0D-7EDAD2BC8488}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7823DFE-6807-4E0D-BA0D-7EDAD2BC8488}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7823DFE-6807-4E0D-BA0D-7EDAD2BC8488}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08692295-A0DB-4E50-BB48-AFC010D03C38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08692295-A0DB-4E50-BB48-AFC010D03C38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08692295-A0DB-4E50-BB48-AFC010D03C38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08692295-A0DB-4E50-BB48-AFC010D03C38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{736E0489-4CA1-4599-A09A-BC7EC1DBA48A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{736E0489-4CA1-4599-A09A-BC7EC1DBA48A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{736E0489-4CA1-4599-A09A-BC7EC1DBA48A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{736E0489-4CA1-4599-A09A-BC7EC1DBA48A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BF5BA8F-136B-4C97-919A-A3355A1F6D32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BF5BA8F-136B-4C97-919A-A3355A1F6D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BF5BA8F-136B-4C97-919A-A3355A1F6D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BF5BA8F-136B-4C97-919A-A3355A1F6D32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

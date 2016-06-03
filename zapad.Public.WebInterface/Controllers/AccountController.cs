@@ -29,7 +29,7 @@ namespace zapad.Public.WebInterface.Controllers
         {
             UserSessionSet.UserSession session = UserSessionSet.Current.GetOrCreateSessionByCookie(this.Request, this.Response);
             if (session.State == UserSessionSet.SessionStates.Authenticated)
-                return RedirectToAction("Index", "Main");
+                return RedirectToAction("Index", "CallRegistry");
 
             service.UpdateAnonymousSession(session.Key.ToString());
             return View(new AuthRegFormModel { tkn = session.NewSingleUseToken(), login_Email = this.Request.Cookies.AllKeys.Contains("l_mail") ? this.Request.Cookies["l_mail"].Value : "" });
@@ -48,15 +48,15 @@ namespace zapad.Public.WebInterface.Controllers
             service.UpdateAnonymousSession(session.Key.ToString());
             
             if (session.VerifyCaptcha(request.captchaId, request.captchaInputText) == false)
-                return Json(new { code = 1, message = "Введенный текст не соотвествует изображению" }, JsonRequestBehavior.AllowGet);
+                return Json(new { code = 1, message = string.Empty }, JsonRequestBehavior.AllowGet);
             if (request.reg_Phone == null || request.reg_Email == null)
-                return Json(new { code = 2, message = "Необходимо указать электронную почту и мобильный телефон" }, JsonRequestBehavior.AllowGet);
+                return Json(new { code = 201, message = string.Empty }, JsonRequestBehavior.AllowGet);
             if (request.reg_F == null || request.reg_I == null || request.reg_O == null)
-                return Json(new { code = 2, message = "Необходимо заполнить поля Фамилия, Имя, Отчество" }, JsonRequestBehavior.AllowGet);
+                return Json(new { code = 202, message = string.Empty }, JsonRequestBehavior.AllowGet);
             if (request.reg_Pos == null || request.reg_Org == null)
-                return Json(new { code = 2, message = "Необходимо указать Вашу должность и организацию" }, JsonRequestBehavior.AllowGet);
+                return Json(new { code = 203, message = string.Empty }, JsonRequestBehavior.AllowGet);
 
-            UserInfo[] rows = service.GetUsersByEmail(request.reg_Email);
+            UserInfo[] rows = service.GetUsersByEmail(request.reg_Email, session.Key.ToString());
             if (rows.Any() == true)
                 return Json(new { code = 3, message = "Пользователь, с указанной Вами электронной почтой уже зарегистрирован" }, JsonRequestBehavior.AllowGet);
 
@@ -78,7 +78,7 @@ namespace zapad.Public.WebInterface.Controllers
                 EMailActivateGuid = Guid.NewGuid().ToString(),
                 XmlInfo = new XElement("data", new XElement("Organization", request.reg_Org)).ToString(),
                 ADName = ""
-            });
+            }, session.Key.ToString());
 
             new EMailSender
             {
@@ -88,11 +88,11 @@ namespace zapad.Public.WebInterface.Controllers
                 Password = Settings.Default.SmtpServerPassword
             }.Send(request.reg_Email, "Активация регистрационных данных в CRM ЗАПАД", "Здравствуйте!\r\n" +
                 "Вы оставили заявку за создание регистрационной информации для работы в ООО Запад на сайте crm.ulzapad.ru\r\n" +
-                "Для того, чтобы активировать Ваш кабинет пройдите по ссылке http://" + Settings.Default.domainName + "/Home/ActivateEMail?id=" + session.User.UserId + "&key=" + session.User.EMailActivateGuid + "\r\n" +
+                "Для того, чтобы активировать Ваш кабинет, пройдите по ссылке http://" + Settings.Default.domainName + "/Account/ActivateEMail?id=" + session.User.UserId + "&key=" + session.User.EMailActivateGuid + "\r\n" +
                 "Если Вы не оставляли таковую заявку, либо Ваши планы изменились - просто проигнорируйте данное письмо.\r\n" +
                 "Отвечать на это письмо не нужно.");
             request.captchaId.RemoveCaptcha();
-            return Json(new { code = 0, message = "На Вашу электронную почту выслано активационное письмо. Пожалуйста, пройдите по ссылке, указанной в тексте письма, для продолжения регистрации." }, JsonRequestBehavior.AllowGet);
+            return Json(new { code = 0, message = string.Empty }, JsonRequestBehavior.AllowGet);
         }
         #endregion
 
@@ -108,8 +108,8 @@ namespace zapad.Public.WebInterface.Controllers
             // либо получаем сессию, либо создаем            
             UserSessionSet.UserSession session = UserSessionSet.Current.GetOrCreateSessionByCookie(this.Request, this.Response);
             if (session.State == UserSessionSet.SessionStates.Authenticated)
-                RedirectToAction("Index", "Main");
-            session.UserLink(id);
+                RedirectToAction("Index", "CallRegistry");
+            session.UserLink(id, session.Key.ToString());
             if (session.User.IsActivatedEMail == false && session.User.EMailActivateGuid != key.ToString())
                 throw new HttpResponseException(HttpStatusCode.Forbidden);
 
@@ -134,19 +134,18 @@ namespace zapad.Public.WebInterface.Controllers
         {
             UserSessionSet.UserSession session = UserSessionSet.Current.GetSessionByCookie(this.Request, tkn);
 
-            if (smspwd == null)
-                return Json(new { code = 2, message = "Укажите код, пришедший на Ваш мобильный телефон" }, JsonRequestBehavior.AllowGet);
+            if (String.IsNullOrEmpty(smspwd))
+                return Json(new { code = 2, message = string.Empty }, JsonRequestBehavior.AllowGet);
 
             // отдаем на проверку sms-пароль
             var xanswer = service.ActivateUserPhone(session.User, session.Key.ToString(), smspwd);
-            if (int.Parse(xanswer.Element("rc").Value) != 0)    // если ошибка
-                return Json(new { code = int.Parse(xanswer.Element("rc").Value), message = xanswer.Element("msg").Value }, JsonRequestBehavior.AllowGet);
+            if (int.Parse(xanswer.Element("Rc").Value) != 0)    // если ошибка
+                return Json(new { code = int.Parse(xanswer.Element("Rc").Value), message = xanswer.Element("Msg").Value }, JsonRequestBehavior.AllowGet);
 
             return Json(new
             {
                 code = 0,
-                message = "Подтверждение Вашего номера прошло успешно. <br /> Ваш запрос отправлен в техническую поддержку. <br />" +
-                    "В ближайшее время с Вами свяжется специалист для продолжения Вашей работы."
+                message = string.Empty
             }, JsonRequestBehavior.AllowGet);
         }
         #endregion
@@ -163,23 +162,23 @@ namespace zapad.Public.WebInterface.Controllers
             // либо получаем сессию, либо создаем            
             UserSessionSet.UserSession session = UserSessionSet.Current.GetSessionByCookie(this.Request, tkn);
             if (session.State == UserSessionSet.SessionStates.Authenticated)
-                RedirectToAction("Index", "Main");
+                RedirectToAction("Index", "CallRegistry");
 
-            UserInfo[] rows = service.GetUsersByEmail(email);
+            UserInfo[] rows = service.GetUsersByEmail(email, session.Key.ToString());
             if (!rows.Any())
-                return Json(new { rc = 5, msg = "Такого пользователя нет." }, JsonRequestBehavior.AllowGet);
+                return Json(new { rc = 5, msg = String.Empty }, JsonRequestBehavior.AllowGet);
             session.User = rows[0];
             
             if (!session.User.IsActivatedEMail)
-                return Json(new { rc = 4, msg = "У пользователя не активирована почта." }, JsonRequestBehavior.AllowGet);
+                return Json(new { rc = 4, msg = String.Empty }, JsonRequestBehavior.AllowGet);
             if (!session.User.IsActivatedPhone)
                 return Json(new { rc = 3, msg = "У пользователя не активирован телефон." }, JsonRequestBehavior.AllowGet);
 
             // Отправка смс-ки
             XElement xanswer = service.RequestSmsPassword(session.User.UserId, session.Key.ToString());
-            service.UpdateUserLastActivity(session.User.UserId);
+            service.UpdateUserLastActivity(session.User.UserId, session.Key.ToString());
 
-            return Json(new { rc = xanswer.Element("rc").getValue(5), msg = xanswer.Element("msg").getValue("") }, JsonRequestBehavior.AllowGet);
+            return Json(new { rc = xanswer.Element("Rc").getValue(5), msg = xanswer.Element("Msg").getValue("") }, JsonRequestBehavior.AllowGet);
         }
         #endregion
 
@@ -192,7 +191,7 @@ namespace zapad.Public.WebInterface.Controllers
         {
             UserSessionSet.UserSession session = UserSessionSet.Current.GetSessionByCookie(this.Request, tkn);
 
-            UserInfo[] rows = service.GetUsersByEmail(email);                
+            UserInfo[] rows = service.GetUsersByEmail(email, session.Key.ToString());                
             if (rows.Any() == false)
             {
                 System.Threading.Thread.Sleep(new TimeSpan(0, 0, 20));  // спим 20 секунд для усложнения сканирования
@@ -206,10 +205,10 @@ namespace zapad.Public.WebInterface.Controllers
 
             // отдаем на проверку sms-пароль
             XElement xanswer = service.CheckSmsPassword(session.Key.ToString(), sms);                
-            if (int.Parse(xanswer.Element("rc").Value) != 0)    // если ошибка
-                return Json(new { rc = int.Parse(xanswer.Element("rc").Value), timeout = xanswer.Element("timeout").GetValueByPath<int>(0), msg = xanswer.Element("msg").Value }, JsonRequestBehavior.AllowGet);
+            if (int.Parse(xanswer.Element("Rc").Value) != 0)    // если ошибка
+                return Json(new { rc = int.Parse(xanswer.Element("Rc").Value), timeout = xanswer.Element("timeout").GetValueByPath<int>(0), msg = xanswer.Element("Msg").Value }, JsonRequestBehavior.AllowGet);
 
-            service.UpdateUserAcceptAdmin(session.User.UserId);
+            service.UpdateUserAcceptAdmin(session.User.UserId, session.Key.ToString());
                 
             session.State = UserSessionSet.SessionStates.Authenticated;
             session.DistrictId = xanswer.Element("DistrictId").getValue(-1);
@@ -227,8 +226,7 @@ namespace zapad.Public.WebInterface.Controllers
         }
         #endregion
 
-        #region JsonResult LostPwd(int tkn, string email): Восстановление пароля через sms
-        
+        #region JsonResult LostPwd(int tkn, string email): Восстановление пароля через sms        
         /// <summary>
         /// Восстановление забытого пароля.
         /// Метод взлома: грузим головную страницу, получаем куку, затем вызываем метод, затем убиваем куку и сначала.
@@ -242,7 +240,7 @@ namespace zapad.Public.WebInterface.Controllers
             if (session.LostPwdActivated == true)   // повторная попытка блокируется
                 throw new HttpResponseException(HttpStatusCode.Forbidden);
 
-            UserInfo[] rows = service.GetUsersByEmail(email);
+            UserInfo[] rows = service.GetUsersByEmail(email, session.Key.ToString());
             if (!rows.Any())
             {
                 System.Threading.Thread.Sleep(new TimeSpan(0, 1, 0));  // спим 1 минуту для усложнения сканирования
@@ -255,42 +253,28 @@ namespace zapad.Public.WebInterface.Controllers
             // просим службу прислать sms-пароль
             XElement xanswer = service.RequestLostPasswordRestore(session.User.UserId, session.Key.ToString());
                
-            if (int.Parse(xanswer.Element("rc").Value) != 0)    // если ошибка
+            if (int.Parse(xanswer.Element("Rc").Value) != 0)    // если ошибка
                 throw new HttpResponseException(HttpStatusCode.Forbidden);
 
-            service.UpdateUserLastActivity(session.User.UserId);
+            service.UpdateUserLastActivity(session.User.UserId, session.Key.ToString());
             session.LostPwdActivated = true;
                 
             return Json(new { rc = 0 }, JsonRequestBehavior.AllowGet);
         }
         #endregion
 
-        #region JsonResult NotReceivePwd(int tkn, string email): Запрос повторной отправки СМС (Через 5 минут)
-        /// <summary>
-        /// Посылка новой смс, если не пришла
-        /// Метод взлома: грузим головную страницу, получаем куку, затем вызываем метод, затем убиваем куку и сначала.
-        /// Защита: уровень WebApi Zone
-        /// </summary>
-        public JsonResult NotReceivePwd(int tkn, string email)
+        #region Выход пользователя
+        public ActionResult Logout()
         {
-            UserSessionSet.UserSession session = UserSessionSet.Current.GetSessionByCookie(this.Request, tkn);
+            UserSessionSet.UserSession session;
 
-            UserInfo[] rows = service.GetUsersByEmail(email);
-            if (!rows.Any())
-            {
-                System.Threading.Thread.Sleep(new TimeSpan(0, 1, 0));  // спим 1 минуту для усложнения сканирования
-                throw new HttpResponseException(HttpStatusCode.Forbidden);
-            }
-            if (rows.Length != 1)
-                throw new HttpResponseException(HttpStatusCode.Forbidden);
-            session.User = rows[0];
+            if (!Authentificate.checkAuthentificate(out session, this))
+                return RedirectToAction("Index", "Account");
+            
+            service.Logout(session.Key.ToString());
+            session.State = SessionSetBase<UserSessionSet, UserSessionSet.UserSession>.SessionStates.Anonymous;
 
-            // просим службу прислать sms-пароль
-            XElement xanswer = service.RequestResendPassword(session.Key.ToString());
-
-            service.UpdateUserLastActivity(session.User.UserId);
-                
-            return Json(new { rc = xanswer.Element("rc").getValue(5), msg = xanswer.Element("msg").getValue("") }, JsonRequestBehavior.AllowGet);
+            return RedirectToAction("Index", "Account");
         }
         #endregion
     }

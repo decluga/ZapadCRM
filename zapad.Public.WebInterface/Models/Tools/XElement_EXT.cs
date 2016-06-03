@@ -86,6 +86,26 @@ namespace zapad.Public.WebInterface.Models.Tools
         }
 
         /// <summary>
+        /// Возвращает массив или значение по умолчанию из XElement
+        /// </summary>
+        /// <param name="elem">XElement</param>
+        /// <param name="def">Значение по умолчанию</param>
+        /// <returns>Результат</returns>
+        public static byte[] getValue(this XElement elem, byte[] def)
+        {
+            byte[] res = new byte[0];
+            try
+            {
+                res = Convert.FromBase64String(elem.Value);
+                return res;
+            }
+            catch
+            {
+                return def;
+            }
+        }
+
+        /// <summary>
         /// Возвращает число, или значение по умолчанию из XElement
         /// </summary>
         /// <param name="elem">XElement</param>
@@ -184,6 +204,28 @@ namespace zapad.Public.WebInterface.Models.Tools
             try
             {
                 if (decimal.TryParse(elem.Value.Replace(',', '.'), System.Globalization.NumberStyles.AllowDecimalPoint | System.Globalization.NumberStyles.AllowLeadingSign, System.Globalization.CultureInfo.InvariantCulture, out res))
+                    return res;
+                else
+                    return def;
+            }
+            catch
+            {
+                return def;
+            }
+        }
+
+        /// <summary>
+        /// Возвращает логическое значение или значение по умолчанию из XElement
+        /// </summary>
+        /// <param name="elem">XElement</param>
+        /// <param name="def">Зачение по умолчанию</param>
+        /// <returns>Результат</returns>
+        public static bool getValue(this XElement elem, bool def)
+        {
+            bool res = false;
+            try
+            {
+                if (Boolean.TryParse(elem.Value, out res))
                     return res;
                 else
                     return def;

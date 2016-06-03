@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.AspNet.SignalR.Client, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Client.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -56,6 +60,7 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -132,6 +137,7 @@
     <Compile Include="Controllers\BaseController\BaseController.cs" />
     <Compile Include="Controllers\CallRegistryController.cs" />
     <Compile Include="Controllers\CaptchaController.cs" />
+    <Compile Include="Controllers\DictionaryController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -141,18 +147,33 @@
     <Compile Include="Models\Authorization\CaptchaHelperExt.cs" />
     <Compile Include="Models\Authorization\CheckAccessResult.cs" />
     <Compile Include="Models\Authorization\ObjectAccessResult.cs" />
+    <Compile Include="Models\Authorization\PageIDAttribute.cs" />
     <Compile Include="Models\Authorization\SessionSetBase.cs" />
     <Compile Include="Models\Authorization\TransactionListBase.cs" />
     <Compile Include="Models\Authorization\UserInfo.cs" />
     <Compile Include="Models\Authorization\UserSessionSet.cs" />
+    <Compile Include="Models\DTO\DictionaryDTO.cs" />
     <Compile Include="Models\ServiceInteraction\IServiceAccess.cs" />
+    <Compile Include="Models\ServiceInteraction\ResponseHubClient.cs" />
+    <Compile Include="Models\ServiceInteraction\ResponseHubClientRepository.cs" />
     <Compile Include="Models\ServiceInteraction\WebHostCacheWrapper.cs" />
     <Compile Include="Models\Tools\EMailSender.cs" />
+    <Compile Include="Models\Tools\FilterHelper.cs" />
     <Compile Include="Models\Tools\HelperCore.cs" />
+    <Compile Include="Models\Tools\KendoFilter.cs" />
+    <Compile Include="Models\Tools\Marketing.cs" />
     <Compile Include="Models\Tools\StylePathBundle.cs" />
+    <Compile Include="Models\Tools\ApiHelpers.cs" />
+    <Compile Include="Models\Tools\WebHostCache.cs" />
+    <Compile Include="Models\Tools\XAttribute_EXT.cs" />
     <Compile Include="Models\Tools\XElement_EXT.cs" />
+    <Compile Include="Models\DTO\CallDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -200,7 +221,13 @@
     <Content Include="Content\Site.css" />
     <Content Include="Images\ajax-loader.gif" />
     <Content Include="Images\bg-cranes.jpg" />
+    <Content Include="Images\line-indicator\green.png" />
+    <Content Include="Images\line-indicator\red.png" />
+    <Content Include="Images\line-indicator\yellow.png" />
+    <Content Include="Images\phone.png" />
     <Content Include="Images\wait.gif" />
+    <Content Include="Scripts\app\helpers.js" />
+    <Content Include="Scripts\app\message.js" />
     <Content Include="Scripts\app\property.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -211,8 +238,8 @@
     <Content Include="Content\kendo\2016.2.518\images\kendoui.ttf" />
     <Content Include="Content\kendo\2016.2.518\images\kendoui.woff" />
     <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
     <Content Include="Scripts\bxslider\jquery.bxslider.js" />
@@ -263,10 +290,12 @@
     <Content Include="Views\Shared\LayoutTemplates\_2columns-right.cshtml" />
     <Content Include="Views\Shared\Partial\Layout\_Footer.cshtml" />
     <Content Include="Views\Shared\Partial\Layout\_Header.cshtml" />
+    <Content Include="Views\Account\ActivateEMail.cshtml" />
+    <Content Include="Views\CallRegistry\CallPage.cshtml" />
+    <Content Include="Views\Shared\Partial\Page\CallQueuePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Shared\Partial\Page\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

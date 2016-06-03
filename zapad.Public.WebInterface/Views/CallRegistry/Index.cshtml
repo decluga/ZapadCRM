@@ -16,15 +16,15 @@
                 <form action="#" id="b-grid-filter-form">
                     <div class="col-md-4">
                         <div class="b-grid-filter-item">
-                            <input id="call-receiver" type="text" placeholder="Имя, телефон, организация" class="input-md w100p"/>
+                            <input id="search-term-input" name="searchTerm" type="text" placeholder="Имя, телефон, организация" class="input-md w100p"/>
                         </div>
                     </div>
 
                     <div class="col-md-2">
-                        <a href="#" class="btn btn-primary b-btn-col b-btn-eq w100p" style="height: 30px;">Поиск</a>
+                        <a href="#" id="search-btn" class="btn btn-primary b-btn-col b-btn-eq w100p" style="height: 30px;">Поиск</a>
                     </div>
                     <div class="col-md-2">
-                        <a href="#" class="btn btn-primary b-btn-col b-btn-eq w100p" style="height: 30px; font-size: 12px;">Сбросить все фильтры</a>
+                        <a href="#" id="clear-filters-btn" class="btn btn-primary b-btn-col b-btn-eq w100p" style="height: 30px; font-size: 12px;">Сбросить все фильтры</a>
                     </div>
                     <div class="col-md-2 pull-right">
                         <a href="#" class="btn btn-primary b-btn-col b-btn-eq w100p" style="height: 30px;">Добавить запись</a>
@@ -37,13 +37,28 @@
             <div id="grid"></div>
         </div>
     </div>
-
-
 </div>
+@Html.Partial("Partial/Page/CallQueuePartial")
 
 <script>
     $(function () {
-        var $gridContainer = $("#b-grid-container");
+        var $gridContainer = $("#b-grid-container"),
+            $blockMessage = $(".b-block-message"),
+            filters = {
+                "DateTime": { url: "/Dictionary/GetCallPeriods", method: "get", key: "Id", value: "Name" },
+                "IsRepeatCall": {
+                    data: [
+                        { "Value": true, "Text": "Да" },
+                        { "Value": false, "Text": "Нет" }
+                    ],
+                    key: "Value",
+                    value : "Text"
+                },
+                "CallReceiver": { url: "/CallRegistry/GetCallRegistryPeoples", method: "get", key: "Id", value: "Name" },
+                "Status": { url: "/Dictionary/GetCallStatuses", method: "get", key: "Id", value: "Name" },
+                "CallResultType": { url: "/Dictionary/GetCallResultTypes", method: "get", key: "Id", value: "Name" },
+                "DepartmentUserDepartment": { url: "/Dictionary/GetDepartments", method: "get", key: "Id", value: "Name" }
+            };
 
         /** Init client profile modal window */
         var $kendoModalWindow = App.Property.initProfileWindow();
@@ -56,9 +71,67 @@
                 type: "json",
                 transport: {
                     read: function (e) {
-                        e.success([]);
+                        var ajaxData = $("#b-grid-filter-form").serialize() + "&" + $.param(e.data);
+                        $.ajax({
+                            type: "post",
+                            url: "/CallRegistry/GetAll",
+                            dataType: "json",
+                            data: ajaxData,
+                            beforeSend: function () {
+                                kendo.ui.progress($gridContainer, true);
+                            },
+                            success: function (data) {
+                                var emptyData = { Items: [], Total: 0 };
+
+                                if (data.rc == 0) {
+                                    e.success(data);
+                                } else if (data.rc == 403) {
+                                    App.Helpers.error403();
+                                    e.success(emptyData);
+                                } else {
+                                    App.Message.showErrorMessage("Во время получения данных произошла ошибка с кодом " + data.rc + ".", $blockMessage);
+                                    e.success(emptyData);
+                                }
+                            },
+                            error: function (data) {
+                                App.Message.showErrorMessage("Во время загрузки данных произошла неизвестная ошибка.", $blockMessage);
+                                e.success([]);
+                            },
+                            complete: function () {
+                                kendo.ui.progress($gridContainer, false);
+                            },
+                        });
                         kendo.ui.progress($gridContainer, false);
                     }
+                },
+                serverPaging: true,
+                serverFiltering: true,
+                //serverSorting: true,
+                pageSize: 10,
+                schema: {
+                    data: "Items",
+                    total: "Total",
+                    model: {
+                        fields: {
+                            Phone: { type: "string" },
+                            Client: { type: "string" },
+                            DateTime: { type: "string" },
+                            CallReceiver: { type: "string" },
+                            IsRepeatCall: { type: "string" },
+                            Status: { type: "string" },
+                            CallResultType: { type: "string" },
+                            DepartmentUserDepartment: { type: "string" },
+                            DepartmentUser: { type: "string" },
+                        }
+                    },
+                },
+            },
+            filterable: {
+                extra: false,
+                messages: {
+                    filter: "Фильтр",
+                    clear: "Очистить",
+                    selectedItemsFormat: ""
                 }
             },
             columns: [
@@ -67,6 +140,9 @@
                     title: "Телефон",
                     filterable: false,
                     encoded: false,
+                    headerAttributes: {
+                        style: "font-weight: bold;"
+                    }
                 },
                 {
                     field: "Client",
@@ -74,44 +150,65 @@
                     width: 125,
                     filterable: false,
                     encoded: false,
+                    headerAttributes: {
+                        style: "font-weight: bold;"
+                    }
                 },
                 {
                     field: "DateTime",
                     title: "Дата и время",
                     width: 130,
-                    filterable: false,
+                    filterable: true,
+                    headerAttributes: {
+                        style: "font-weight: bold;"
+                    }
                 },
                 {
                     field: "CallReceiver",
                     title: "Кто принял",
                     width: 125,
-                    filterable: false,
+                    filterable: true,
+                    headerAttributes: {
+                        style: "font-weight: bold;"
+                    }
                 },
                 {
                     field: "IsRepeatCall",
                     title: "Повторный звонок",
                     width: 125,
-                    filterable: false,
+                    filterable: true,
+                    headerAttributes: {
+                        style: "font-weight: bold;"
+                    }
                 },
                 {
                     field: "Status",
                     title: "Статус",
-                    filterable: false,
+                    filterable: true,
                     encoded: false,
+                    headerAttributes: {
+                        style: "font-weight: bold;"
+                    }
                 },
                 {
                     field: "CallResultType",
                     title: "Результат",
                     width: 95,
-                    filterable: false,
+                    filterable: true,
                     encoded: false,
+                    headerAttributes: {
+                        style: "font-weight: bold;"
+                    }
                 },
                 {
-                    field: "Department",
+                    field: "DepartmentUserDepartment",
                     title: "Отдел",
                     width: 95,
-                    filterable: false,
+                    filterable: true,
                     encoded: false,
+                    headerAttributes: {
+                        style: "font-weight: bold;"
+                    }
                 },
                 {
                     field: "DepartmentUser",
@@ -119,8 +216,47 @@
                     width: 95,
                     filterable: false,
                     encoded: false,
+                    headerAttributes: {
+                        style: "font-weight: bold;"
+                    }
                 }
             ]
+        }).data("kendoGrid");
+
+        /** Init filter */
+        $grid.bind("filterMenuInit", function (e) {
+            switch(e.field)
+            {
+                case "DateTime":
+                    App.Helpers.createDropDownFilter.call(this, e, null, filters[e.field].url, filters[e.field].method, filters[e.field].key, filters[e.field].value, false, $blockMessage);
+                    break;
+                case "IsRepeatCall":
+                    App.Helpers.createDropDownFilter.call(this, e, filters[e.field].data, null, null, filters[e.field].key, filters[e.field].value, false, $blockMessage);
+                    break;
+                case "CallReceiver":
+                    App.Helpers.createMultiSelectFilter.call(this, e, null, filters[e.field].url, filters[e.field].method, filters[e.field].key, filters[e.field].value, false, $blockMessage);
+                    break;
+                case "Status":
+                    App.Helpers.createMultiSelectFilter.call(this, e, null, filters[e.field].url, filters[e.field].method, filters[e.field].key, filters[e.field].value, false, $blockMessage);
+                    break;
+                case "CallResultType":
+                    App.Helpers.createMultiSelectFilter.call(this, e, null, filters[e.field].url, filters[e.field].method, filters[e.field].key, filters[e.field].value, false, $blockMessage);
+                    break;
+                case "DepartmentUserDepartment":
+                    App.Helpers.createMultiSelectFilter.call(this, e, null, filters[e.field].url, filters[e.field].method, filters[e.field].key, filters[e.field].value, false, $blockMessage);
+                    break;
+            }
+        });
+
+        function changeFilter() {
+            //App.Message.hideMessage($blockMessage);
+            $grid.dataSource.read({ page: 1 });
+        }
+
+        $('#search-btn').on('click', changeFilter);
+        $('#clear-filters-btn').on('click', function () {
+            $('#search-term-input').val("");
+            $grid.dataSource.filter([]);
         });
     });
 </script>

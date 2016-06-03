@@ -302,11 +302,15 @@ jQuery(function(){jQuery("#wMessage").kendoWindow({"modal":true,"iframe":false,"
 					/** Set step */
                     $("#bEnter").attr("data-step", 2);
                     break;
+                  case 3:
+                    /** Show message */
+                    showInfoMessage("Телефон не активирован");
+                    break;
                   case 4:
 					/** Show message */
                     showInfoMessage("Электронная почта не активирована");
                     break;
-                    case 5:
+                  case 5:
                         /** Show message */
                         showInfoMessage("Пользователь с такой электронной почтой не зарегистрирован");
                         break;
@@ -391,7 +395,7 @@ jQuery(function(){jQuery("#wMessage").kendoWindow({"modal":true,"iframe":false,"
                 switch (result.rc) {
                     case 0:
                         /** Redirect to auth page */
-                        window.location.replace("/Main/");
+                        window.location.replace("/CallRegistry/");
 
                         break;
                     case 1:
@@ -501,7 +505,7 @@ jQuery(function(){jQuery("#wMessage").kendoWindow({"modal":true,"iframe":false,"
                 success: function (result) {
                     hideLoader();
                     if (result.code == 0) {
-                        showInfoMessage(result.message);
+                        showInfoMessage("На Вашу электронную почту выслано активационное письмо. Пожалуйста, пройдите по ссылке, указанной в тексте письма, для продолжения регистрации.");
                         $wMessage.kendoWindow({
                             close: function (e) {
                                 window.location.reload();
@@ -509,7 +513,18 @@ jQuery(function(){jQuery("#wMessage").kendoWindow({"modal":true,"iframe":false,"
                         });
                     }
                     else {
-                        showInfoMessage(result.message);
+                        var message = "";
+                        switch (result.code) {
+                            case 1: message = "Введенный текст не соотвествует изображению";
+                                break;
+                            case 201: message = "Необходимо указать электронную почту и мобильный телефон";
+                                break;
+                            case 202: message = "Необходимо заполнить поля Фамилия, Имя, Отчество";
+                                break;
+                            case 203: message = "Необходимо указать Вашу должность и организацию";
+                                break;
+                        }
+                        showInfoMessage(message);
                         $("#bReg").data("kendoButton").enable(true);
                     }
                 },

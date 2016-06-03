@@ -43,10 +43,7 @@ namespace zapad.crm.WebHostCache
             {
                 var config = SelfHostConfigRetriever.GetHostConfig();
                 var siteUrl = config.GetElementByName("url").Value;
-                using (WebApp.Start<Startup>(url: siteUrl))
-                {
-                    Thread.Sleep(Timeout.Infinite);
-                }
+                WebApp.Start<Startup>(url: siteUrl);
 
                 if (WinService.IsDebug == false)
                     eventLog.WriteEntry("Инициализация завершена", EventLogEntryType.Information);

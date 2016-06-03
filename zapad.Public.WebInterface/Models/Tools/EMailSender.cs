@@ -29,6 +29,11 @@ namespace zapad.Public.WebInterface.Models.Tools
         /// <param name="priority">Приоритет письма</param>
         public void Send(string ToEMail, string Subject, string Body, MailPriority priority = MailPriority.Normal)
         {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("*******");
+            System.Diagnostics.Debug.WriteLine("Email message: " + Environment.NewLine + Body);
+            System.Diagnostics.Debug.WriteLine("*******");
+#else
             using (MailMessage m = new MailMessage())
             {
                 m.From = new MailAddress(this.FromEMail);
@@ -45,6 +50,7 @@ namespace zapad.Public.WebInterface.Models.Tools
                 smtp.Credentials = new NetworkCredential(this.UserName, this.Password);
                 smtp.Send(m);
             }
+#endif
         }
     }
 }
