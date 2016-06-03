@@ -22,7 +22,7 @@ namespace zapad.Public.WebInterface.Controllers
         [Route("GetCallPeriods"), HttpGet, PageID(201)]
         public JsonResult GetCallPeriods()
         {
-            var response = WebHostCache.Current.GetResponse<XElement>(@"api\Dictionary\GetCallPeriods&sessionKey=" + session.Key.ToString());
+            var response = WebHostCache.Current.GetResponse<XElement>(@"api\Dictionary\GetCallPeriods?sessionKey=" + session.Key.ToString());
             var result = response.Elements("CallPeriod").Select(x => new DictionaryDTO<Int32>()
             {
                 Id = x.Element("Id").getValue(0),
