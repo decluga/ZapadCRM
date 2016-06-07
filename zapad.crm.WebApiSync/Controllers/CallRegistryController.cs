@@ -1,16 +1,18 @@
 ﻿using Microsoft.AspNet.SignalR.Client;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Xml.Linq;
 using zapad.crm.WebApiSync.Properties;
+using zapad.Model.Calls.DTO;
 
 namespace zapad.crm.WebApiSync.Controllers
 {
     public class CallRegistryController : ApiController
     {
         #region Расширенные методы для реестра звонков
-        #region /GetAll: Получение списка звонков для реестра
+        #region /GetCalls: Получение списка звонков для реестра
         /// <param name="page">Текущая страница</param>
         /// <param name="count">Количество записей на странице</param>
         /// <param name="filter">Фильтр</param>
@@ -23,36 +25,35 @@ namespace zapad.crm.WebApiSync.Controllers
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
             await hubConn.Start();
 
-            var result = new XElement("Calls",
-                                new XElement("Call",
-                                    new XElement("Id", Guid.NewGuid()),
-                                    new XElement("Phone", "+7(123)235-14-11"),
-                                    new XElement("Client","Валерий Рябов"),
-                                    new XElement("DateTime", DateTime.Now),
-                                    new XElement("CallReceiver", "Артем Аленин"),
-                                    new XElement("IsRepeatCall", false),
-                                    new XElement("EventStatus", "Принят"),
-                                    new XElement("EventResultType", "Передан"),
-                                    new XElement("DepartmentUser",
-                                        new XElement("Name", "Денис Стенюшкин"),
-                                        new XElement("Department", "ОП 3-2")
-                                    )
-                                ),
-                                new XElement("Call",
-                                    new XElement("Id", Guid.NewGuid()),
-                                    new XElement("Phone", "+7(355)221-22-11"),
-                                    new XElement("Client","Иванов Георгий"),
-                                    new XElement("DateTime", DateTime.Now),
-                                    new XElement("CallReceiver","Иванов Александр"),
-                                    new XElement("IsRepeatCall", true),
-                                    new XElement("EventStatus", "ПРОПУЩЕН!"),
-                                    new XElement("EventResultType", "ПЕРЕЗВОНИТЬ"),
-                                    new XElement("DepartmentUser", 
-                                        new XElement("Name", "Бекшин Олег"),
-                                        new XElement("Department", "ОП 3-1")
-                                    )
-                                )
-                            );
+            var result = CallDTO.ArrayToXElement(new CallDTO[]
+            {
+                new CallDTO
+                {
+                    Id = Guid.NewGuid(),
+                    Phone = "+7(123)235-14-11",
+                    Client = "Валерий Рябов",
+                    DateTime = DateTime.Now,
+                    CallReceiver = "Артем Аленин",
+                    IsRepeatCall = false,
+                    EventStatus = "Принят",
+                    EventResultType = "Передан",
+                    DepartmentUser = "Денис Стенюшкин",
+                    DepartmentUserDepartment = "ОП 3-2"
+                },
+                new CallDTO
+                {
+                    Id = Guid.NewGuid(),
+                    Phone = "+7(355)221-22-11",
+                    Client = "Иванов Георгий",
+                    DateTime = DateTime.Now,
+                    CallReceiver = "Иванов Александр",
+                    IsRepeatCall = true,
+                    EventStatus = "ПРОПУЩЕН!",
+                    EventResultType = "ПЕРЕЗВОНИТЬ",
+                    DepartmentUser = "Бекшин Олег",
+                    DepartmentUserDepartment = "ОП 3-1"
+                }
+            });
             result.Add(new XElement("Total", 50));
             result.Add(new XElement("rc", 0));
             result.Add(new XElement("msg", ""));
@@ -74,30 +75,19 @@ namespace zapad.crm.WebApiSync.Controllers
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
             await hubConn.Start();
 
-            var result = new XElement("Call",
-                                new XElement("Id", Guid.NewGuid()),
-                                new XElement("Phone", "+7(123)235-14-11"),
-                                new XElement("Client",
-                                    new XElement("Name", "Валерий Рябов")
-                                ),
-                                new XElement("DateTime", DateTime.Now),
-                                new XElement("CallReceiver",
-                                    new XElement("Name", "Артем Аленин")
-                                ),
-                                new XElement("IsRepeatCall", false),
-                                new XElement("Status",
-                                    new XElement("Name", "Принят")
-                                ),
-                                new XElement("CallResultType",
-                                    new XElement("Name", "Передан")
-                                ),
-                                new XElement("DepartmentUser",
-                                    new XElement("Name", "Денис Стенюшкин"),
-                                    new XElement("Department",
-                                        new XElement("Name", "ОП 3-2")
-                                    )
-                                )
-                            );
+            var result = CallDTO.ToXElement(new CallDTO()
+            {
+                Id = Guid.NewGuid(),
+                Phone = "+7(123)235-14-11",
+                Client = "Валерий Рябов",
+                DateTime = DateTime.Now,
+                CallReceiver = "Артем Аленин",
+                IsRepeatCall = false,
+                EventStatus = "Принят",
+                EventResultType = "Передан",
+                DepartmentUser = "Денис Стенюшкин",
+                DepartmentUserDepartment = "ОП 3-2"
+            });
             result.Add(new XElement("rc", 0));
             result.Add(new XElement("msg", ""));
 
@@ -119,30 +109,19 @@ namespace zapad.crm.WebApiSync.Controllers
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
             await hubConn.Start();
 
-            var result = new XElement("Call",
-                                new XElement("Id", Guid.NewGuid()),
-                                new XElement("Phone", "+7(123)235-14-11"),
-                                new XElement("Client",
-                                    new XElement("Name", "Валерий Рябов")
-                                ),
-                                new XElement("DateTime", DateTime.Now),
-                                new XElement("CallReceiver",
-                                    new XElement("Name", "Артем Аленин")
-                                ),
-                                new XElement("IsRepeatCall", false),
-                                new XElement("Status",
-                                    new XElement("Name", "Принят")
-                                ),
-                                new XElement("CallResultType",
-                                    new XElement("Name", "Передан")
-                                ),
-                                new XElement("DepartmentUser",
-                                    new XElement("Name", "Денис Стенюшкин"),
-                                    new XElement("Department",
-                                        new XElement("Name", "ОП 3-2")
-                                    )
-                                )
-                            );
+            var result = CallDTO.ToXElement(new CallDTO()
+            {
+                Id = Guid.NewGuid(),
+                Phone = "+7(123)235-14-11",
+                Client = "Валерий Рябов",
+                DateTime = DateTime.Now,
+                CallReceiver = "Артем Аленин",
+                IsRepeatCall = false,
+                EventStatus = "Принят",
+                EventResultType = "Передан",
+                DepartmentUser = "Денис Стенюшкин",
+                DepartmentUserDepartment = "ОП 3-2"
+            });
             result.Add(new XElement("rc", 0));
             result.Add(new XElement("msg", ""));
             
@@ -162,30 +141,19 @@ namespace zapad.crm.WebApiSync.Controllers
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
             await hubConn.Start();
 
-            var result = new XElement("Call",
-                                new XElement("Id", Guid.NewGuid()),
-                                new XElement("Phone", "+7(123)235-14-11"),
-                                new XElement("Client",
-                                    new XElement("Name", "Валерий Рябов")
-                                ),
-                                new XElement("DateTime", DateTime.Now),
-                                new XElement("CallReceiver",
-                                    new XElement("Name", "Артем Аленин")
-                                ),
-                                new XElement("IsRepeatCall", false),
-                                new XElement("Status",
-                                    new XElement("Name", "Принят")
-                                ),
-                                new XElement("CallResultType",
-                                    new XElement("Name", "Передан")
-                                ),
-                                new XElement("DepartmentUser",
-                                    new XElement("Name", "Денис Стенюшкин"),
-                                    new XElement("Department",
-                                        new XElement("Name", "ОП 3-2")
-                                    )
-                                )
-                            );
+            var result = CallDTO.ToXElement(new CallDTO()
+            {
+                Id = Guid.NewGuid(),
+                Phone = "+7(123)235-14-11",
+                Client = "Валерий Рябов",
+                DateTime = DateTime.Now,
+                CallReceiver = "Артем Аленин",
+                IsRepeatCall = false,
+                EventStatus = "Принят",
+                EventResultType = "Передан",
+                DepartmentUser = "Денис Стенюшкин",
+                DepartmentUserDepartment = "ОП 3-2"
+            });
             result.Add(new XElement("rc", 0));
             result.Add(new XElement("msg", ""));
             

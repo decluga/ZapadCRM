@@ -66,6 +66,7 @@
     <Compile Include="Security\UserInfo.cs" />
     <Compile Include="Tools\KendoFilter.cs" />
     <Compile Include="Tools\XElement_EXT.cs" />
+    <Compile Include="ViewModel\CallViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

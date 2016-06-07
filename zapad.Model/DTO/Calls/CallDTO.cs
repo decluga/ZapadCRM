@@ -10,9 +10,9 @@ namespace zapad.Model.Calls.DTO
         public Guid Id { get; set; }
         public string Phone { get; set; }
         public string Client { get; set; }
-        public string DateTime { get; set; }
+        public DateTime DateTime { get; set; }
         public string CallReceiver { get; set; }
-        public string IsRepeatCall { get; set; }
+        public bool IsRepeatCall { get; set; }
         public string EventStatus { get; set; }
         public string EventResultType { get; set; }
         public string DepartmentUserDepartment { get; set; }
@@ -48,9 +48,9 @@ namespace zapad.Model.Calls.DTO
             callDTO.Id = xml.Element("Id").getValue(Guid.Empty);
             callDTO.Phone = xml.Element("Phone").getValue(string.Empty);
             callDTO.Client = xml.Element("Client").getValue(string.Empty);
-            callDTO.DateTime = xml.Element("DateTime").getValue(System.DateTime.MinValue).ToString("dd.MM.yyyy hh:mm");
+            callDTO.DateTime = xml.Element("DateTime").getValue(System.DateTime.MinValue);
             callDTO.CallReceiver = xml.Element("CallReceiver").getValue(string.Empty);
-            callDTO.IsRepeatCall = xml.Element("IsRepeatCall").getValue(true) ? "Да" : "Нет";
+            callDTO.IsRepeatCall = xml.Element("IsRepeatCall").getValue(true);
             callDTO.EventStatus = xml.Element("EventStatus").getValue(string.Empty);
             callDTO.EventResultType = xml.Element("EventResultType").getValue(string.Empty);
             callDTO.DepartmentUserDepartment = xml.Element("DepartmentUserDepartment").getValue(string.Empty);

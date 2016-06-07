@@ -11,6 +11,7 @@ using zapad.Public.WebInterface.Models.Authorization;
 using zapad.Model.Tools;
 using zapad.Model.Calls.DTO;
 using zapad.Model.API.Requests;
+using zapad.Model.ViewModel;
 
 namespace zapad.Public.WebInterface.Controllers
 {
@@ -90,7 +91,7 @@ namespace zapad.Public.WebInterface.Controllers
                 Filters = filter
             };
             var response = WebHostCache.Current.GetResponse<XElement>(@"api\CallRegistry\GetCalls", CallsRequest.ToXElement(requestParameters), WebHostCache.ContentTypes.xml);
-            var result = CallDTO.ArrayFromXElement(response).ToList();
+            var result = CallDTO.ArrayFromXElement(response).ViewModelList();
             return Json(new { rc = 0, Items = result, Total = response.Element("Total").getValue(Int32.MinValue) }, JsonRequestBehavior.AllowGet);
         }
         #endregion
