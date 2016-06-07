@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="zapad.crm.WebHostCache.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="WebApiSyncUrls" Type="System.Xml.XmlDocument" Scope="Application">
-      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;ChannelsList&gt;&lt;channel priority="1" bandwith="2"&gt;http://localhost:9095&lt;/channel&gt;&lt;/ChannelsList&gt;</Value>
-    </Setting>
     <Setting Name="msFlushAuditInterval" Type="System.Int64" Scope="Application">
       <Value Profile="(Default)">15000</Value>
     </Setting>
@@ -43,6 +40,24 @@
     </Setting>
     <Setting Name="msSessionLifiTime" Type="System.Int64" Scope="Application">
       <Value Profile="(Default)">109000000</Value>
+    </Setting>
+    <Setting Name="WebApiSyncUrls" Type="System.Xml.XmlDocument" Scope="Application">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ChannelsList&gt;
+  &lt;channel priority="1" bandwith="2"&gt;http://localhost:9095&lt;/channel&gt;
+&lt;/ChannelsList&gt;</Value>
+    </Setting>
+    <Setting Name="msRequestResendInterval" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">15000</Value>
+    </Setting>
+    <Setting Name="msPingZoneInterval" Type="System.Int64" Scope="Application">
+      <Value Profile="(Default)">10000</Value>
+    </Setting>
+    <Setting Name="PingRequestsCount" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">8</Value>
+    </Setting>
+    <Setting Name="NoPingNotifyInterval" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">00:05:00</Value>
     </Setting>
   </Settings>
 </SettingsFile>

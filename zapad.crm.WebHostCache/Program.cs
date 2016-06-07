@@ -7,11 +7,16 @@ using System.Reflection;
 using System.Threading;
 
 using zapad.crm.WebHostCache.Helpers;
+using zapad.crm.WebHostCache.Models.Tools;
+using System.Xml.Linq;
+using zapad.crm.WebHostCache.Properties;
 
 namespace zapad.crm.WebHostCache
 {
     static class Program
     {
+        static public RequestBuffer WebApiSyncRequestBuffer;
+
         /// <summary>
         /// Главная точка входа для приложения.
         /// </summary>
@@ -46,6 +51,7 @@ namespace zapad.crm.WebHostCache
                                 WinService service = new WinService();
                                 WinService.IsDebug = true;
                                 service.Debug_Start();
+                                WebApiSyncRequestBuffer = new RequestBuffer(WebApiSync.Current.GetResponse<XElement>, Settings.Default.msRequestResendInterval);
                                 Thread.Sleep(Timeout.Infinite);
                                 return;
                             }
@@ -66,6 +72,7 @@ namespace zapad.crm.WebHostCache
             {
                 ServiceBase[] ServicesToRun;
                 ServicesToRun = new ServiceBase[] { new WinService() };
+                WebApiSyncRequestBuffer = new RequestBuffer(WebApiSync.Current.GetResponse<XElement>, Settings.Default.msRequestResendInterval);
                 ServiceBase.Run(ServicesToRun);
             }
         }

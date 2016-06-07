@@ -15,8 +15,8 @@ namespace zapad.crm.WebApiSync.Controllers
         /// <param name="count">Количество записей на странице</param>
         /// <param name="filter">Фильтр</param>
         /// <param name="searchTerm">Поиск</param>
-        [Route("GetAll"), HttpPost]
-        public async Task<XElement> GetAll([FromBody]XElement requestParameters)
+        [Route("GetCalls"), HttpPost]
+        public async Task<XElement> GetCalls([FromBody]XElement requestParameters)
         {
             #region Заглушка
             var hubConn = new HubConnection(Settings.Default.ResponseHubUrl);
@@ -27,61 +27,29 @@ namespace zapad.crm.WebApiSync.Controllers
                                 new XElement("Call",
                                     new XElement("Id", Guid.NewGuid()),
                                     new XElement("Phone", "+7(123)235-14-11"),
-                                    new XElement("Client",
-                                        new XElement("Id", Guid.NewGuid()),
-                                        new XElement("Name", "Валерий Рябов")
-                                    ),
+                                    new XElement("Client","Валерий Рябов"),
                                     new XElement("DateTime", DateTime.Now),
-                                    new XElement("CallReceiver",
-                                        new XElement("Id", Guid.NewGuid()),
-                                        new XElement("Name", "Артем Аленин")
-                                    ),
+                                    new XElement("CallReceiver", "Артем Аленин"),
                                     new XElement("IsRepeatCall", false),
-                                    new XElement("Status",
-                                        new XElement("Id", 1),
-                                        new XElement("Name", "Принят")
-                                    ),
-                                    new XElement("CallResultType",
-                                        new XElement("Id", 1),
-                                        new XElement("Name", "Передан")
-                                    ),
+                                    new XElement("EventStatus", "Принят"),
+                                    new XElement("EventResultType", "Передан"),
                                     new XElement("DepartmentUser",
-                                        new XElement("Id", Guid.NewGuid()),
                                         new XElement("Name", "Денис Стенюшкин"),
-                                        new XElement("Department",
-                                            new XElement("Id", Guid.NewGuid()),
-                                            new XElement("Name", "ОП 3-2")
-                                        )
+                                        new XElement("Department", "ОП 3-2")
                                     )
                                 ),
                                 new XElement("Call",
                                     new XElement("Id", Guid.NewGuid()),
                                     new XElement("Phone", "+7(355)221-22-11"),
-                                    new XElement("Client",
-                                        new XElement("Id", Guid.NewGuid()),
-                                        new XElement("Name", "Иванов Георгий")
-                                    ),
+                                    new XElement("Client","Иванов Георгий"),
                                     new XElement("DateTime", DateTime.Now),
-                                    new XElement("CallReceiver",
-                                        new XElement("Id", Guid.NewGuid()),
-                                        new XElement("Name", "Иванов Александр")
-                                    ),
+                                    new XElement("CallReceiver","Иванов Александр"),
                                     new XElement("IsRepeatCall", true),
-                                    new XElement("Status",
-                                        new XElement("Id", 1),
-                                        new XElement("Name", "ПРОПУЩЕН!")
-                                    ),
-                                    new XElement("CallResultType",
-                                        new XElement("Id", 1),
-                                        new XElement("Name", "ПЕРЕЗВОНИТЬ")
-                                    ),
-                                    new XElement("DepartmentUser",
-                                        new XElement("Id", Guid.NewGuid()),
+                                    new XElement("EventStatus", "ПРОПУЩЕН!"),
+                                    new XElement("EventResultType", "ПЕРЕЗВОНИТЬ"),
+                                    new XElement("DepartmentUser", 
                                         new XElement("Name", "Бекшин Олег"),
-                                        new XElement("Department",
-                                            new XElement("Id", Guid.NewGuid()),
-                                            new XElement("Name", "ОП 3-1")
-                                        )
+                                        new XElement("Department", "ОП 3-1")
                                     )
                                 )
                             );
@@ -90,54 +58,7 @@ namespace zapad.crm.WebApiSync.Controllers
             result.Add(new XElement("msg", ""));
 
             hubProxy.Invoke("OperationCallback", requestParameters.Element("sessionKey").Value, long.Parse(requestParameters.Element("requestId").Value), result);
-            return WebHostCache.Models.DTO.ReturnCodes.BuildRcAnswer(0, "Успешно");
-            #endregion
-        }
-        #endregion
-
-        //TODO vryabov: возможно объединить запросы с GetAll?
-        #region /GetCallRegistryPeoples: Получение списка пользователей для фильтра "Кто принял"
-        [Route("GetCallRegistryPeoples"), HttpGet]
-        public async Task<XElement> GetCallRegistryPeoples(string sessionKey, long requestId)
-        {
-            #region Заглушка
-            var hubConn = new HubConnection(Settings.Default.ResponseHubUrl);
-            var hubProxy = hubConn.CreateHubProxy("ResponseHub");
-            await hubConn.Start();
-
-            var result = new XElement("Peoples",
-                                new XElement("People",
-                                    new XElement("Id", Guid.NewGuid()),
-                                    new XElement("Name", "Артем Аленин")
-                                    
-                                ),
-                                new XElement("People",
-                                    new XElement("Id", Guid.NewGuid()),
-                                    new XElement("Name", "Иванов Александр")
-
-                                ),
-                                new XElement("People",
-                                    new XElement("Id", Guid.NewGuid()),
-                                    new XElement("Name", "Денис Стенюшкин")
-
-                                ),
-                                new XElement("People",
-                                    new XElement("Id", Guid.NewGuid()),
-                                    new XElement("Name", "Валерий Рябов")
-
-                                ),
-                                new XElement("People",
-                                    new XElement("Id", Guid.NewGuid()),
-                                    new XElement("Name", "Малышева Ирина")
-
-                                )
-                            );
-            result.Add(new XElement("rc", 0));
-            result.Add(new XElement("msg", ""));
-
-
-            hubProxy.Invoke("OperationCallback", sessionKey, requestId, result);
-            return WebHostCache.Models.DTO.ReturnCodes.BuildRcAnswer(0, "Успешно");
+            return zapad.Model.API.ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
         #endregion
@@ -157,28 +78,22 @@ namespace zapad.crm.WebApiSync.Controllers
                                 new XElement("Id", Guid.NewGuid()),
                                 new XElement("Phone", "+7(123)235-14-11"),
                                 new XElement("Client",
-                                    new XElement("Id", Guid.NewGuid()),
                                     new XElement("Name", "Валерий Рябов")
                                 ),
                                 new XElement("DateTime", DateTime.Now),
                                 new XElement("CallReceiver",
-                                    new XElement("Id", Guid.NewGuid()),
                                     new XElement("Name", "Артем Аленин")
                                 ),
                                 new XElement("IsRepeatCall", false),
                                 new XElement("Status",
-                                    new XElement("Id", 1),
                                     new XElement("Name", "Принят")
                                 ),
                                 new XElement("CallResultType",
-                                    new XElement("Id", 1),
                                     new XElement("Name", "Передан")
                                 ),
                                 new XElement("DepartmentUser",
-                                    new XElement("Id", Guid.NewGuid()),
                                     new XElement("Name", "Денис Стенюшкин"),
                                     new XElement("Department",
-                                        new XElement("Id", Guid.NewGuid()),
                                         new XElement("Name", "ОП 3-2")
                                     )
                                 )
@@ -188,7 +103,7 @@ namespace zapad.crm.WebApiSync.Controllers
 
 
             hubProxy.Invoke("OperationCallback", sessionKey, requestId, result);
-            return WebHostCache.Models.DTO.ReturnCodes.BuildRcAnswer(0, "Успешно");
+            return zapad.Model.API.ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
         #endregion
@@ -208,28 +123,22 @@ namespace zapad.crm.WebApiSync.Controllers
                                 new XElement("Id", Guid.NewGuid()),
                                 new XElement("Phone", "+7(123)235-14-11"),
                                 new XElement("Client",
-                                    new XElement("Id", Guid.NewGuid()),
                                     new XElement("Name", "Валерий Рябов")
                                 ),
                                 new XElement("DateTime", DateTime.Now),
                                 new XElement("CallReceiver",
-                                    new XElement("Id", Guid.NewGuid()),
                                     new XElement("Name", "Артем Аленин")
                                 ),
                                 new XElement("IsRepeatCall", false),
                                 new XElement("Status",
-                                    new XElement("Id", 1),
                                     new XElement("Name", "Принят")
                                 ),
                                 new XElement("CallResultType",
-                                    new XElement("Id", 1),
                                     new XElement("Name", "Передан")
                                 ),
                                 new XElement("DepartmentUser",
-                                    new XElement("Id", Guid.NewGuid()),
                                     new XElement("Name", "Денис Стенюшкин"),
                                     new XElement("Department",
-                                        new XElement("Id", Guid.NewGuid()),
                                         new XElement("Name", "ОП 3-2")
                                     )
                                 )
@@ -238,7 +147,7 @@ namespace zapad.crm.WebApiSync.Controllers
             result.Add(new XElement("msg", ""));
             
             hubProxy.Invoke("OperationCallback", req.Element("sessionKey").Value, long.Parse(req.Element("requestId").Value), result);
-            return WebHostCache.Models.DTO.ReturnCodes.BuildRcAnswer(0, "Успешно");
+            return zapad.Model.API.ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
         #endregion
@@ -257,28 +166,22 @@ namespace zapad.crm.WebApiSync.Controllers
                                 new XElement("Id", Guid.NewGuid()),
                                 new XElement("Phone", "+7(123)235-14-11"),
                                 new XElement("Client",
-                                    new XElement("Id", Guid.NewGuid()),
                                     new XElement("Name", "Валерий Рябов")
                                 ),
                                 new XElement("DateTime", DateTime.Now),
                                 new XElement("CallReceiver",
-                                    new XElement("Id", Guid.NewGuid()),
                                     new XElement("Name", "Артем Аленин")
                                 ),
                                 new XElement("IsRepeatCall", false),
                                 new XElement("Status",
-                                    new XElement("Id", 1),
                                     new XElement("Name", "Принят")
                                 ),
                                 new XElement("CallResultType",
-                                    new XElement("Id", 1),
                                     new XElement("Name", "Передан")
                                 ),
                                 new XElement("DepartmentUser",
-                                    new XElement("Id", Guid.NewGuid()),
                                     new XElement("Name", "Денис Стенюшкин"),
                                     new XElement("Department",
-                                        new XElement("Id", Guid.NewGuid()),
                                         new XElement("Name", "ОП 3-2")
                                     )
                                 )
@@ -287,7 +190,7 @@ namespace zapad.crm.WebApiSync.Controllers
             result.Add(new XElement("msg", ""));
             
             hubProxy.Invoke("OperationCallback", req.Element("sessionKey").Value, long.Parse(req.Element("requestId").Value), result);
-            return WebHostCache.Models.DTO.ReturnCodes.BuildRcAnswer(0, "Успешно");
+            return zapad.Model.API.ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
         #endregion

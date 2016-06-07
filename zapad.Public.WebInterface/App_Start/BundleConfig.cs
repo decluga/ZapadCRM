@@ -59,6 +59,11 @@ namespace zapad.Public.WebInterface
                 "~/Scripts/kinetic/jquery.mousewheel.js"
             ));
 
+            // SignalR JS
+            bundles.Add(new ScriptBundle("~/Scripts/SignalRJS").Include(
+                "~/Scripts/jquery.signalR-2.2.0.min.js"
+            ));
+
             BundleTable.EnableOptimizations = true;
         }
     }

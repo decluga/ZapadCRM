@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Http;
+using zapad.Model.Security;
 using zapad.Public.WebInterface.Models.ServiceInteraction;
 
 namespace zapad.Public.WebInterface.Models.Authorization

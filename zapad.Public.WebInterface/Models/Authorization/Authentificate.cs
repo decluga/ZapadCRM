@@ -6,6 +6,8 @@ using System.Web.Mvc;
 using System.Xml.Linq;
 using zapad.Public.WebInterface.Models.ServiceInteraction;
 using zapad.Public.WebInterface.Models.Tools;
+using zapad.Model.Security;
+using zapad.Model.Tools;
 
 namespace zapad.Public.WebInterface.Models.Authorization
 {
@@ -56,17 +58,7 @@ namespace zapad.Public.WebInterface.Models.Authorization
 
             if (access.Element("Rc").getValue(5) == 0)
             {
-                ResultInfo = access.Elements("Item").Select(u => new ObjectAccessResult()
-                {
-                    Id = u.Element("Id").getValue(-1),
-                    Access = new CheckAccessResult()
-                    {
-                        Delete = u.Element("Delete").getValue(0) == 1,
-                        InsertChildren = u.Element("InsertChild").getValue(0) == 1,
-                        Read = u.Element("Read").getValue(0) == 1,
-                        Update = u.Element("Update").getValue(0) == 1
-                    }
-                }).First();
+                ResultInfo = ObjectAccessResult.FromXElement(access.Element("ObjectAccessResult"));
             }
             return ResultInfo;
         }

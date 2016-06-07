@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Xml.Linq;
-using zapad.Public.WebInterface.Models.Authorization;
+using zapad.Model.Security;
+using zapad.Model.Tools;
 using zapad.Public.WebInterface.Models.Tools;
 
 namespace zapad.Public.WebInterface.Models.ServiceInteraction
@@ -26,7 +24,7 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// <returns>true - если пользователь активирован успешно, иначе - false</returns>
         public bool ActivateUserEmail(UserInfo user, string sessionKey)
         {
-            var request = ApiHelpers.BuildRequest(sessionKey, user.ToXElement());
+            var request = ApiHelpers.BuildRequest(sessionKey, UserInfo.ToXElement(user));
             var result = WebHostCache.Current.GetResponse<XElement>(@"api\Security\ActivateUserEmail", request);
             return (result.Element("Rc").getValue(DEFAULT_RC) == 0);
         }
@@ -40,7 +38,7 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// <returns></returns>
         public XElement ActivateUserPhone(UserInfo user, string sessionKey, string smsPassword)
         {
-            var request = ApiHelpers.BuildRequest(sessionKey, user.ToXElement(), new XElement("smsPassword", smsPassword));
+            var request = ApiHelpers.BuildRequest(sessionKey, UserInfo.ToXElement(user), new XElement("smsPassword", smsPassword));
             var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\ActivateUserPhone", request);
             return result;
         }
@@ -53,9 +51,9 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         /// <returns>Добавленный пользователь</returns>
         public UserInfo AddUser(UserInfo user, string sessionKey)
         {
-            var request = ApiHelpers.BuildRequest(sessionKey, user.ToXElement());
+            var request = ApiHelpers.BuildRequest(sessionKey, UserInfo.ToXElement(user));
             var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\AddUser", request);
-            user.FromXElement(result.Element("UserInfo"));
+            user = UserInfo.FromXElement(result.Element("UserInfo"));
 
             return user;
         }
@@ -81,7 +79,8 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         public UserInfo[] GetUsersByEmail(string email, string sessionKey)
         {
             var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\GetUsersByEmail?email=" + email + "&sessionKey=" + sessionKey);
-            return ApiHelpers.ExtractUserArray(result);
+            var retval = UserInfo.ArrayFromXElement(result.Element("Users"));
+            return retval;
         }
 
         /// <summary>
@@ -93,7 +92,8 @@ namespace zapad.Public.WebInterface.Models.ServiceInteraction
         public UserInfo[] GetUsersById(int id, string sessionKey)
         {
             var result = WebHostCache.Current.GetResponse<XElement>(@"api\security\GetUsersById?id=" + id + "&sessionKey=" + sessionKey);
-            return ApiHelpers.ExtractUserArray(result);
+            var retval = UserInfo.ArrayFromXElement(result.Element("Users"));
+            return retval;
         }
 
         /// <summary>

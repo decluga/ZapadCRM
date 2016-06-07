@@ -44,6 +44,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\Requests\CallsRequest.cs" />
+    <Compile Include="API\ReturnCodes.cs" />
+    <Compile Include="DTO\Calls\CallDTO.cs" />
+    <Compile Include="DTO\Dictionaries\Base\BaseDictionaryDTO.cs" />
+    <Compile Include="DTO\Dictionaries\DepartmentDTO.cs" />
+    <Compile Include="DTO\Dictionaries\EventPeriodDTO.cs" />
+    <Compile Include="DTO\Dictionaries\EventResultTypeDTO.cs" />
+    <Compile Include="DTO\Dictionaries\EventStatusDTO.cs" />
+    <Compile Include="DTO\Dictionaries\PeopleDTO.cs" />
     <Compile Include="Main\main_TaskStatus.cs" />
     <Compile Include="Main\main_TaskType.cs" />
     <Compile Include="Main\main_OrgStruct.cs" />
@@ -52,7 +61,13 @@
     <Compile Include="Question\crm_Question.cs" />
     <Compile Include="Question\crm_QuestionAnswer.cs" />
     <Compile Include="Question\crm_QuestionAnswerGroup.cs" />
+    <Compile Include="Security\CheckAccessResult.cs" />
+    <Compile Include="Security\ObjectAccessResult.cs" />
+    <Compile Include="Security\UserInfo.cs" />
+    <Compile Include="Tools\KendoFilter.cs" />
+    <Compile Include="Tools\XElement_EXT.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

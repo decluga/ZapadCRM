@@ -25,46 +25,6 @@ namespace zapad.crm.WebHostCache.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ChannelsList>\r\n  <channel priority=\"1\" " +
-            "bandwith=\"2\">http://localhost:9095</channel>\r\n</ChannelsList>")]
-        public global::System.Xml.XmlDocument WebApiSyncUrls {
-            get {
-                return ((global::System.Xml.XmlDocument)(this["WebApiSyncUrls"]));
-            }
-        }
-
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10000")]
-        public long msPingZoneInterval
-        {
-            get
-            {
-                return ((long)(this["msPingZoneInterval"]));
-            }
-        }
-
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("8")]
-        public int PingRequestsCount
-        {
-            get
-            {
-                return ((int)(this["PingRequestsCount"]));
-            }
-        }
-
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("00:05:00")]
-        public global::System.TimeSpan NoPingNotifyInterval
-        {
-            get
-            {
-                return ((global::System.TimeSpan)(this["NoPingNotifyInterval"]));
-			}
-		}
         [global::System.Configuration.DefaultSettingValueAttribute("15000")]
         public long msFlushAuditInterval {
             get {
@@ -177,6 +137,52 @@ namespace zapad.crm.WebHostCache.Properties {
         public long msSessionLifiTime {
             get {
                 return ((long)(this["msSessionLifiTime"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ChannelsList>\r\n  <channel priority=\"1\" " +
+            "bandwith=\"2\">http://localhost:9095</channel>\r\n</ChannelsList>")]
+        public global::System.Xml.XmlDocument WebApiSyncUrls {
+            get {
+                return ((global::System.Xml.XmlDocument)(this["WebApiSyncUrls"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15000")]
+        public double msRequestResendInterval {
+            get {
+                return ((double)(this["msRequestResendInterval"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10000")]
+        public long msPingZoneInterval {
+            get {
+                return ((long)(this["msPingZoneInterval"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        public int PingRequestsCount {
+            get {
+                return ((int)(this["PingRequestsCount"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:05:00")]
+        public global::System.TimeSpan NoPingNotifyInterval {
+            get {
+                return ((global::System.TimeSpan)(this["NoPingNotifyInterval"]));
             }
         }
     }

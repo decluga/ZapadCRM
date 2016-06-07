@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using zapad.Public.WebInterface.Models.Authorization;
+﻿using System.Xml.Linq;
+using zapad.Model.Security;
 
 namespace zapad.Public.WebInterface.Models.ServiceInteraction
 {

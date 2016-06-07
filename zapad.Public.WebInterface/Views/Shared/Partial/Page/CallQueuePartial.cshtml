@@ -5,7 +5,7 @@
         </div>
         <div class="current-queue pull-right">
             <strong>Очередь ожидания</strong>
-            <ul>
+            @*<ul>
                 <li>
                     <img src="~/Images/phone.png"/>
                     <span>+79561234545</span>
@@ -18,8 +18,9 @@
                     <img src="~/Images/phone.png" />
                     <span>+79331556677</span>
                 </li>
-            </ul>
-            <span class="label-more-calls">(Eще: 4)</span>
+            </ul>*@
+            <ul id="call-queue-menu"></ul>
+            <span id="more-calls-count" class="label-more-calls">(Eще: 0)</span>
             <span class="toggle-hide-queue">Скрыть</span>
         </div>
     </div>
@@ -33,7 +34,6 @@
         </div>
     </div>
 </div>
-
 <script>
     $('.toggle-hide-queue').on('click', function (e) {
         var topLaneElement = $("#top-lane");
@@ -49,5 +49,42 @@
             topLaneElement.animate({ height: "30px" }, 'slow');
             $('.toggle-hide-queue').toggleClass('hidden');
         }
+    });
+
+
+    function createCallQueueMenu(data) {
+        var callQueueMenu = $('#call-queue-menu');
+        clearMenu(callQueueMenu);
+        var dataSource = [];
+        for (var i = 0; i < data.length; i++)
+        {
+            if (i >= 3)
+                break;
+            $('<li><img src=@Url.Content("~/Images/phone.png")><span>' + data[i] + '</span></li>').appendTo(callQueueMenu);
+        }
+        //$("#call-queue-menu").kendoMenu({ dataSource: dataSource });
+        $('#more-calls-count').text('(Eще: '+ (data.length > 3 ? data.length - 3 : 0) +')')
+    }
+
+    function clearMenu(menu) {
+        //var callQueueMenu = $('#call-queue-menu').kendoMenu().data("kendoMenu");
+        //$("#call-queue-menu>li").each(function () {
+        //    callQueueMenu.remove(this);
+        //});
+        menu.empty();
+    }
+
+
+    /*SingalR CallQueue*/
+    $(function () {
+        var callQueueHub = $.connection.callQueueHub;
+
+        callQueueHub.client.sendQueue = function (queue) {
+            createCallQueueMenu(queue);
+        };
+
+        $.connection.hub.start().done(function () {
+            $.get('@Url.Content("~/CallQueue/Update")');
+        });
     });
 </script>

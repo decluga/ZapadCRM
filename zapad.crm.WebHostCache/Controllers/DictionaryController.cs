@@ -5,6 +5,7 @@ using System.Web.Http.Filters;
 using System.Xml.Linq;
 using zapad.crm.WebHostCache.Filters;
 using zapad.crm.WebHostCache.Models.Tools;
+using zapad.Model.API;
 using zapad.Public.WebInterface.Models.Authorization;
 
 namespace zapad.crm.WebHostCache.Controllers
@@ -13,31 +14,33 @@ namespace zapad.crm.WebHostCache.Controllers
     public class DictionaryController : ApiController
     {
         #region Справочник "Периоды звоноков"
-        #region /GetCallPeriods: Получение справочника периодов звонков
+        #region /GetEventPeriods: Получение справочника периодов события
         /// <summary>
-        /// Сущность периода звонков:
+        /// Сущность периода:
         /// Id, Name, Timespan
         /// </summary>
         /// <returns></returns>
-        [Route("GetCallPeriods"), HttpGet, PageID(201)]
-        public async Task<XElement> GetCallPeriods(string sessionKey, long requestId)
+        [Route("GetEventPeriods"), HttpGet, PageID(201)]
+        public async Task<XElement> GetEventPeriods(string sessionKey, long requestId)
         {
-            return WebApiSync.Current.GetResponse<XElement>(@"api\Dictionary\GetCallPeriods?sessionKey=" + sessionKey + "&requestId=" + requestId);
+            Program.WebApiSyncRequestBuffer.AddRequest(@"api\Dictionary\GetEventPeriods?sessionKey=" + sessionKey + "&requestId=" + requestId);
+            return ReturnCodes.BuildRcAnswer(0, "OK");
         }
         #endregion
         #endregion
 
-        #region Справочник "Статусы звонка"
-        #region /GetCallStatuses: Получение справочника статусов звонка
+        #region Справочник "Статусы события"
+        #region /GetEventStatuses: Получение справочника статусов
         /// <summary>
-        /// Сущность статусов звонка:
+        /// Сущность статусов:
         /// Id, Name
         /// </summary>
         /// <returns></returns>
-        [Route("GetCallStatuses"), HttpGet, PageID(202)]
-        public async Task<XElement> GetCallStatuses(string sessionKey, long requestId)
+        [Route("GetEventStatuses"), HttpGet, PageID(202)]
+        public async Task<XElement> GetEventStatuses(string sessionKey, long requestId)
         {
-            return WebApiSync.Current.GetResponse<XElement>(@"api\Dictionary\GetCallStatuses?sessionKey=" + sessionKey + "&requestId=" + requestId);
+            Program.WebApiSyncRequestBuffer.AddRequest(@"api\Dictionary\GetEventStatuses?sessionKey=" + sessionKey + "&requestId=" + requestId);
+            return ReturnCodes.BuildRcAnswer(0, "OK");
         }
         #endregion
         #endregion
@@ -49,10 +52,11 @@ namespace zapad.crm.WebHostCache.Controllers
         /// Id, Name
         /// </summary>
         /// <returns></returns>
-        [Route("GetCallResultTypes"), HttpGet, PageID(203)]
-        public async Task<XElement> GetCallResultTypes(string sessionKey, long requestId)
+        [Route("GetEventResultTypes"), HttpGet, PageID(203)]
+        public async Task<XElement> GetEventResultTypes(string sessionKey, long requestId)
         {
-            return WebApiSync.Current.GetResponse<XElement>(@"api\Dictionary\GetCallResultTypes?sessionKey=" + sessionKey + "&requestId=" + requestId);
+            Program.WebApiSyncRequestBuffer.AddRequest(@"api\Dictionary\GetEventResultTypes?sessionKey=" + sessionKey + "&requestId=" + requestId);
+            return ReturnCodes.BuildRcAnswer(0, "OK");
         }
         #endregion
         #endregion
@@ -67,7 +71,19 @@ namespace zapad.crm.WebHostCache.Controllers
         [Route("GetDepartments"), HttpGet, PageID(204)]
         public async Task<XElement> GetDepartments(string sessionKey, long requestId)
         {
-            return WebApiSync.Current.GetResponse<XElement>(@"api\Dictionary\GetDepartments?sessionKey=" + sessionKey + "&requestId=" + requestId);
+            Program.WebApiSyncRequestBuffer.AddRequest(@"api\Dictionary\GetDepartments?sessionKey=" + sessionKey + "&requestId=" + requestId);
+            return ReturnCodes.BuildRcAnswer(0, "OK");
+        }
+        #endregion
+        #endregion
+
+        #region Справочник "Сотрудники"
+        #region /GetPeoples: Получение списка пользователей для фильтра "Кто принял"
+        [Route("GetPeoples"), HttpGet, PageID(103)]
+        public async Task<XElement> GetPeoples(string sessionKey, long requestId)
+        {
+            Program.WebApiSyncRequestBuffer.AddRequest(@"api\Dictionary\GetPeoples?sessionKey=" + sessionKey + "&requestId=" + requestId);
+            return ReturnCodes.BuildRcAnswer(0, "OK");
         }
         #endregion
         #endregion

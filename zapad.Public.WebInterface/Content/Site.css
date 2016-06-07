@@ -130,7 +130,8 @@ body {
     margin-right: auto;
     margin-left: auto;
     z-index: 1003;
-    min-width: 750px;
+    /*Заменить на адаптацию*/
+    min-width: 1050px;
 }
 @media (min-width: 768px) {
   .call-queue {
@@ -145,6 +146,12 @@ body {
 @media (min-width: 1200px) {
   .call-queue {
     width: 1170px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .call-queue {
+    width: 1270px;
   }
 }
 
@@ -190,4 +197,5 @@ body {
 
 .current-queue ul li{
     display: inline;
+    margin-right:5px;
 }

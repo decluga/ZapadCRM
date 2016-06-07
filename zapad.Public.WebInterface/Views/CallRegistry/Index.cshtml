@@ -45,7 +45,7 @@
         var $gridContainer = $("#b-grid-container"),
             $blockMessage = $(".b-block-message"),
             filters = {
-                "DateTime": { url: "/Dictionary/GetCallPeriods", method: "get", key: "Id", value: "Name" },
+                "DateTime": { url: "/Dictionary/GetEventPeriods", method: "get", key: "Id", value: "Name" },
                 "IsRepeatCall": {
                     data: [
                         { "Value": true, "Text": "Да" },
@@ -54,9 +54,9 @@
                     key: "Value",
                     value : "Text"
                 },
-                "CallReceiver": { url: "/CallRegistry/GetCallRegistryPeoples", method: "get", key: "Id", value: "Name" },
-                "Status": { url: "/Dictionary/GetCallStatuses", method: "get", key: "Id", value: "Name" },
-                "CallResultType": { url: "/Dictionary/GetCallResultTypes", method: "get", key: "Id", value: "Name" },
+                "CallReceiver": { url: "/Dictionary/GetPeoples", method: "get", key: "Id", value: "Name" },
+                "EventStatus": { url: "/Dictionary/GetEventStatuses", method: "get", key: "Id", value: "Name" },
+                "EventResultType": { url: "/Dictionary/GetEventResultTypes", method: "get", key: "Id", value: "Name" },
                 "DepartmentUserDepartment": { url: "/Dictionary/GetDepartments", method: "get", key: "Id", value: "Name" }
             };
 
@@ -74,7 +74,7 @@
                         var ajaxData = $("#b-grid-filter-form").serialize() + "&" + $.param(e.data);
                         $.ajax({
                             type: "post",
-                            url: "/CallRegistry/GetAll",
+                            url: "/CallRegistry/GetCalls",
                             dataType: "json",
                             data: ajaxData,
                             beforeSend: function () {
@@ -112,13 +112,14 @@
                     data: "Items",
                     total: "Total",
                     model: {
+                        id : "Id",
                         fields: {
                             Phone: { type: "string" },
                             Client: { type: "string" },
                             DateTime: { type: "string" },
                             CallReceiver: { type: "string" },
                             IsRepeatCall: { type: "string" },
-                            Status: { type: "string" },
+                            EventStatus: { type: "string" },
                             CallResultType: { type: "string" },
                             DepartmentUserDepartment: { type: "string" },
                             DepartmentUser: { type: "string" },
@@ -126,6 +127,7 @@
                     },
                 },
             },
+            selectable: "multiple",
             filterable: {
                 extra: false,
                 messages: {
@@ -135,6 +137,7 @@
                 }
             },
             columns: [
+                { field: "Id", hidden:true },
                 {
                     field: "Phone",
                     title: "Телефон",
@@ -182,7 +185,7 @@
                     }
                 },
                 {
-                    field: "Status",
+                    field: "EventStatus",
                     title: "Статус",
                     filterable: true,
                     encoded: false,
@@ -191,7 +194,7 @@
                     }
                 },
                 {
-                    field: "CallResultType",
+                    field: "EventResultType",
                     title: "Результат",
                     width: 95,
                     filterable: true,
@@ -236,10 +239,10 @@
                 case "CallReceiver":
                     App.Helpers.createMultiSelectFilter.call(this, e, null, filters[e.field].url, filters[e.field].method, filters[e.field].key, filters[e.field].value, false, $blockMessage);
                     break;
-                case "Status":
+                case "EventStatus":
                     App.Helpers.createMultiSelectFilter.call(this, e, null, filters[e.field].url, filters[e.field].method, filters[e.field].key, filters[e.field].value, false, $blockMessage);
                     break;
-                case "CallResultType":
+                case "EventResultType":
                     App.Helpers.createMultiSelectFilter.call(this, e, null, filters[e.field].url, filters[e.field].method, filters[e.field].key, filters[e.field].value, false, $blockMessage);
                     break;
                 case "DepartmentUserDepartment":
@@ -252,7 +255,10 @@
             //App.Message.hideMessage($blockMessage);
             $grid.dataSource.read({ page: 1 });
         }
-
+        $("#grid").delegate("tbody>tr", "dblclick", function () {
+            console.debug($grid.dataItem($grid.select()).Id);
+            //alert($("#grid").data("kendoGrid"))
+        });
         $('#search-btn').on('click', changeFilter);
         $('#clear-filters-btn').on('click', function () {
             $('#search-term-input').val("");

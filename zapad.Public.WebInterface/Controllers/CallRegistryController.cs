@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using zapad.Public.WebInterface.Models.Tools;
 using System.Xml.Linq;
 using Newtonsoft.Json;
-using zapad.Public.WebInterface.Models.ViewModels;
 using zapad.Public.WebInterface.Models.Authorization;
+using zapad.Model.Tools;
+using zapad.Model.Calls.DTO;
+using zapad.Model.API.Requests;
 
 namespace zapad.Public.WebInterface.Controllers
 {
@@ -71,50 +73,25 @@ namespace zapad.Public.WebInterface.Controllers
             return View();
         }
 
-        #region /GetAll: Получение списка звонков для реестра
+        #region /GetCalls: Получение списка звонков для реестра
         /// <param name="page">Текущая страница</param>
         /// <param name="pageSize">Количество записей на странице</param>
         /// <param name="filter">Фильтр</param>
         /// <param name="searchTerm">Поиск</param>
-        [Route("GetAll"), HttpPost, PageID(102)]
-        public JsonResult GetAll(long? page, long? pageSize, KendoFilter filter = null, string searchTerm = "")
+        [Route("GetCalls"), HttpPost, PageID(102)]
+        public JsonResult GetCalls(long? page, long? pageSize, KendoFilter filter = null, string searchTerm = "")
         {
-            var requestParameters = new XElement("Request",
-                                                    new XElement("page", page.HasValue ? page.Value : 0),
-                                                    new XElement("pageSize", pageSize.HasValue ? pageSize.Value : 0),
-                                                    new XElement("searchTerm", searchTerm),
-                                                    new XElement("sessionKey", session.Key.ToString())
-                                                    );
-            FilterHelper.AddRequestFilters(ref requestParameters, filter);
-            var response = WebHostCache.Current.GetResponse<XElement>(@"api\CallRegistry\GetAll", requestParameters, WebHostCache.ContentTypes.xml);
-            var result = response.Elements("Call").Select(x => new CallDTO()
+            var requestParameters = new CallsRequest()
             {
-                Id = new Guid(x.Element("Id").getValue("")),
-                Phone = x.Element("Phone").getValue(""),
-                Client = x.Element("Client").Element("Name").getValue(""),
-                DateTime = x.Element("DateTime").getValue(DateTime.MinValue).ToString("dd.MM.yyyy hh:mm"),
-                CallReceiver = x.Element("CallReceiver").Element("Name").getValue(""),
-                IsRepeatCall = x.Element("IsRepeatCall").getValue(true) ? "Да" : "Нет",
-                Status = x.Element("Status").Element("Name").getValue(""),
-                CallResultType = x.Element("CallResultType").Element("Name").getValue(""),
-                DepartmentUserDepartment = x.Element("DepartmentUser").Element("Department").Element("Name").getValue(""),
-                DepartmentUser = x.Element("DepartmentUser").Element("Name").getValue("")
-            }).ToList();
-            return Json(new { rc = 0, Items = result, /*Total = response.Element("Total").getValue(Int64.MinValue)*/ }, JsonRequestBehavior.AllowGet);
-        }
-        #endregion
-
-        #region /GetCallRegistryPeoples: Получение списка пользователей для фильтра "Кто принял"
-        [Route("GetAll"), HttpGet, PageID(103)]
-        public JsonResult GetCallRegistryPeoples()
-        {
-            var response = WebHostCache.Current.GetResponse<XElement>(@"api\CallRegistry\GetCallRegistryPeoples?sessionKey=" + session.Key.ToString());
-            var result = response.Elements("People").Select(x => new DictionaryDTO<Guid>()
-            {
-                Id = new Guid(x.Element("Id").getValue("")),
-                Name = x.Element("Name").getValue("")
-            }).ToList();
-            return Json(new { rc = 0, Items = result}, JsonRequestBehavior.AllowGet);
+                SessionKey = session.Key,
+                Page = page.HasValue ? page.Value : 0,
+                PageSize = pageSize.HasValue ? pageSize.Value : 0,
+                SearchTerm = searchTerm,
+                Filters = filter
+            };
+            var response = WebHostCache.Current.GetResponse<XElement>(@"api\CallRegistry\GetCalls", CallsRequest.ToXElement(requestParameters), WebHostCache.ContentTypes.xml);
+            var result = CallDTO.ArrayFromXElement(response).ToList();
+            return Json(new { rc = 0, Items = result, Total = response.Element("Total").getValue(Int32.MinValue) }, JsonRequestBehavior.AllowGet);
         }
         #endregion
     }

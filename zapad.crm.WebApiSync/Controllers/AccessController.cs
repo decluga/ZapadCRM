@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Xml.Linq;
 using zapad.crm.WebApiSync.Properties;
-using zapad.crm.WebHostCache.Models.DTO;
+using zapad.Model.API;
+using zapad.Model.Security;
 
 namespace zapad.crm.WebApiSync.Controllers
 {
@@ -26,14 +27,21 @@ namespace zapad.crm.WebApiSync.Controllers
             var hubConn = new HubConnection(Settings.Default.ResponseHubUrl);
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
             await hubConn.Start();
+
+            ObjectAccessResult access = new ObjectAccessResult()
+            {
+                Id = pageId,
+                Access = new CheckAccessResult()
+                {
+                    Read = true,
+                    Update = true,
+                    InsertChildren = true,
+                    Delete = true
+                }
+            };
+
             hubProxy.Invoke("OperationCallback", sessionKey, requestId,
-                ReturnCodes.BuildRcAnswer(0, "Успешно",
-                    new XElement("Item", 
-                        new XElement("Id", 0),
-                        new XElement("Read", 1),
-                        new XElement("Delete", 1),
-                        new XElement("Update", 1),
-                        new XElement("InsertChild", 1))));
+                ReturnCodes.BuildRcAnswer(0, "Успешно", ObjectAccessResult.ToXElement(access)));
             return ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
@@ -45,13 +53,20 @@ namespace zapad.crm.WebApiSync.Controllers
         public XElement PageTransfer(string sessionKey, long pageId)
         {
             #region Заглушка 
-            return ReturnCodes.BuildRcAnswer(0, "Успешно",
-                    new XElement("Item",
-                        new XElement("Id", pageId),
-                        new XElement("Read", 1),
-                        new XElement("Delete", 1),
-                        new XElement("Update", 1),
-                        new XElement("InsertChild", 1)));
+
+            ObjectAccessResult access = new ObjectAccessResult()
+            {
+                Id = pageId,
+                Access = new CheckAccessResult()
+                {
+                    Read = true,
+                    Update = true,
+                    InsertChildren = true,
+                    Delete = true
+                }
+            };
+
+            return ReturnCodes.BuildRcAnswer(0, "Успешно", ObjectAccessResult.ToXElement(access));
             #endregion
         }
     }

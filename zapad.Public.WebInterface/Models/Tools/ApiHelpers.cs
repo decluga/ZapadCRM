@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Xml.Linq;
+using zapad.Model.Security;
 using zapad.Public.WebInterface.Models.Authorization;
 
 namespace zapad.Public.WebInterface.Models.Tools
@@ -25,25 +26,6 @@ namespace zapad.Public.WebInterface.Models.Tools
             if (contents != null && contents.Length > 0)
                 foreach (var c in contents) xml.Add(c);
             return xml;
-        }
-
-        /// <summary>
-        /// Извлекает массив UserInfo из ответа сервера
-        /// </summary>
-        /// <param name="result">Ответ сервера</param>
-        /// <returns>Массив данных о пользователях</returns>
-        static public UserInfo[] ExtractUserArray(XElement result)
-        {
-            var userNodes = result.Element("Users").Elements("UserInfo");
-            var users = new List<UserInfo>(userNodes.Count());
-            foreach (var xml in userNodes)
-            {
-                var u = new UserInfo();
-                u.FromXElement(xml);
-                users.Add(u);
-            }
-
-            return users.ToArray();
         }
     }
 }

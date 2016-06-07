@@ -7,24 +7,29 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Xml.Linq;
 using zapad.crm.WebApiSync.Properties;
-using zapad.crm.WebHostCache.Models.DTO;
+using zapad.Model.API;
+using zapad.Model.Security;
 
 namespace zapad.crm.WebApiSync.Controllers
 {
     public class AnonymousController : ApiController
     {
         #region Заглушка
-        static private List<XElement> users = new List<XElement>();
+        static private List<UserInfo> users = new List<UserInfo>();
         static AnonymousController()
         {
-            users.Add(new XElement("UserInfo",
-                new XElement("UserId", 23),
-                new XElement("EMail", "1@1.com"),
-                new XElement("IsActivatedEMail", true),
-                new XElement("IsActivatedPhone", true),
-                new XElement("F", "Одинов"),
-                new XElement("I", "Раз"),
-                new XElement("O", "Разович")));
+            UserInfo u = new UserInfo()
+            {
+                UserId = 23,
+                EMail = "1@1.com",
+                IsActivatedEMail = true,
+                IsActivatedPhone = true,
+                F = "Одинов",
+                I = "Раз",
+                O = "Разович"
+            };
+
+            users.Add(u);
         }
         #endregion
 
@@ -39,11 +44,15 @@ namespace zapad.crm.WebApiSync.Controllers
             // Долгие операции выполнять в отдельном потоке
             // Статус код отправителю вернуть через ответ на запрос немедленно после передачи запроса дальше по цепочке или начала обработки данным сервисом
 
+            // Параметры запроса
+            string sessionKey = request.Element("sessionKey").Value;
+            long requestId = long.Parse(request.Element("requestId").Value);
+
             #region Заглушка
             var hubConn = new HubConnection(Settings.Default.ResponseHubUrl);
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
             await hubConn.Start();
-            hubProxy.Invoke("OperationCallback", request.Element("sessionKey").Value, long.Parse(request.Element("requestId").Value), ReturnCodes.BuildRcAnswer(0, "Успешно"));
+            hubProxy.Invoke("OperationCallback", sessionKey, requestId, ReturnCodes.BuildRcAnswer(0, "Успешно"));
             return ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
@@ -60,8 +69,7 @@ namespace zapad.crm.WebApiSync.Controllers
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
             await hubConn.Start();
             hubProxy.Invoke("OperationCallback", sessionKey, requestId, 
-                ReturnCodes.BuildRcAnswer(0, "Успешно", 
-                    new XElement("Users", users.Where(u => u.Element("EMail").Value == email))));
+                ReturnCodes.BuildRcAnswer(0, "Успешно", UserInfo.ArrayToXElement(users.Where(u => u.EMail == email).ToArray())));
             return ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
@@ -78,8 +86,7 @@ namespace zapad.crm.WebApiSync.Controllers
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
             await hubConn.Start();
             hubProxy.Invoke("OperationCallback", sessionKey, requestId,
-                ReturnCodes.BuildRcAnswer(0, "Успешно",
-                    new XElement("Users", users.Where(u => u.Element("UserId").Value == id.ToString()))));
+                ReturnCodes.BuildRcAnswer(0, "Успешно", UserInfo.ArrayToXElement(users.Where(u => u.UserId == id).ToArray())));
             return ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
@@ -94,12 +101,20 @@ namespace zapad.crm.WebApiSync.Controllers
         [HttpPost]
         public async Task<XElement> AddUser([FromBody] XElement request)
         {
+            // Параметры запроса
+            string sessionKey = request.Element("sessionKey").Value;
+            long requestId = long.Parse(request.Element("requestId").Value);
+            UserInfo user = UserInfo.FromXElement(request.Element("UserInfo"));
+
             #region Заглушка
             var hubConn = new HubConnection(Settings.Default.ResponseHubUrl);
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
             await hubConn.Start();
-            users.Add(request.Element("UserInfo"));
-            hubProxy.Invoke("OperationCallback", request.Element("sessionKey").Value, long.Parse(request.Element("requestId").Value), ReturnCodes.BuildRcAnswer(0, "Успешно", request.Element("UserInfo")));
+
+            users.Add(user);
+
+            hubProxy.Invoke("OperationCallback", sessionKey, requestId, 
+                ReturnCodes.BuildRcAnswer(0, "Успешно", UserInfo.ToXElement(user)));
             return ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
@@ -123,11 +138,20 @@ namespace zapad.crm.WebApiSync.Controllers
         [HttpPost]
         public async Task<XElement> activate_email([FromBody] XElement request)
         {
+            // Параметры запроса
+            string sessionKey = request.Element("sessionKey").Value;
+            long requestId = long.Parse(request.Element("requestId").Value);
+            UserInfo user = UserInfo.FromXElement(request.Element("UserInfo"));
+
             #region Заглушка
             var hubConn = new HubConnection(Settings.Default.ResponseHubUrl);
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
+
+            var lu = users.Where(u => u.UserId == user.UserId).FirstOrDefault();
+            lu.IsActivatedEMail = true;
+
             await hubConn.Start();
-            hubProxy.Invoke("OperationCallback", request.Element("sessionKey").Value, long.Parse(request.Element("requestId").Value), ReturnCodes.BuildRcAnswer(0, "Успешно"));
+            hubProxy.Invoke("OperationCallback", sessionKey, requestId, ReturnCodes.BuildRcAnswer(0, "Успешно"));
             return ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
@@ -147,11 +171,21 @@ namespace zapad.crm.WebApiSync.Controllers
         [HttpPost]
         public async Task<XElement> activate_phone([FromBody] XElement request)
         {
+            // Параметры запроса
+            string sessionKey = request.Element("sessionKey").Value;
+            long requestId = long.Parse(request.Element("requestId").Value);
+            UserInfo user = UserInfo.FromXElement(request.Element("UserInfo"));
+            string smsPassword = request.Element("smsPassword").Value;
+
             #region Заглушка
             var hubConn = new HubConnection(Settings.Default.ResponseHubUrl);
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
+
+            var lu = users.Where(u => u.UserId == user.UserId).FirstOrDefault();
+            lu.IsActivatedPhone = true;
+
             await hubConn.Start();
-            hubProxy.Invoke("OperationCallback", request.Element("sessionKey").Value, long.Parse(request.Element("requestId").Value), ReturnCodes.BuildRcAnswer(0, "Успешно"));
+            hubProxy.Invoke("OperationCallback", sessionKey, requestId, ReturnCodes.BuildRcAnswer(0, "Успешно"));
             return ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
@@ -178,11 +212,16 @@ namespace zapad.crm.WebApiSync.Controllers
         [HttpPost]
         public async Task<XElement> UpdateUserLastActivity([FromBody] XElement request)
         {
+            // Параметры запроса
+            string sessionKey = request.Element("sessionKey").Value;
+            long requestId = long.Parse(request.Element("requestId").Value);
+            int userId = int.Parse(request.Element("userId").Value);
+
             #region Заглушка
             var hubConn = new HubConnection(Settings.Default.ResponseHubUrl);
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
             await hubConn.Start();
-            hubProxy.Invoke("OperationCallback", request.Element("sessionKey").Value, long.Parse(request.Element("requestId").Value), ReturnCodes.BuildRcAnswer(0, "Успешно"));
+            hubProxy.Invoke("OperationCallback", sessionKey, requestId, ReturnCodes.BuildRcAnswer(0, "Успешно"));
             return ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }
@@ -209,11 +248,20 @@ namespace zapad.crm.WebApiSync.Controllers
         [HttpPost]
         public async Task<XElement> UpdateUserAcceptAdmin([FromBody] XElement request)
         {
+            // Параметры запроса
+            string sessionKey = request.Element("sessionKey").Value;
+            long requestId = long.Parse(request.Element("requestId").Value);
+            int userId = int.Parse(request.Element("userId").Value);
+
             #region Заглушка
             var hubConn = new HubConnection(Settings.Default.ResponseHubUrl);
             var hubProxy = hubConn.CreateHubProxy("ResponseHub");
+
+            var lu = users.Where(u => u.UserId == userId).Single();
+            lu.IsAcceptAdmin = true;
+
             await hubConn.Start();
-            hubProxy.Invoke("OperationCallback", request.Element("sessionKey").Value, long.Parse(request.Element("requestId").Value), ReturnCodes.BuildRcAnswer(0, "Успешно"));
+            hubProxy.Invoke("OperationCallback", sessionKey, requestId, ReturnCodes.BuildRcAnswer(0, "Успешно"));
             return ReturnCodes.BuildRcAnswer(0, "Успешно");
             #endregion
         }

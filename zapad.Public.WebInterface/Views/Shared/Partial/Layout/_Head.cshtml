@@ -17,5 +17,7 @@
 <script>
     moment.locale('ru');
 </script>
+@Scripts.Render("~/Scripts/SignalRJS")
+<script src="@Url.Content("~/signalr/hubs")" type="text/javascript"></script>
 @Scripts.Render("~/Scripts/AppJS")
 <!-- #endregion -->

@@ -116,7 +116,6 @@
     <Compile Include="Models\Authentification\Authenticate.cs" />
     <Compile Include="Models\Authentification\SessionSet.cs" />
     <Compile Include="Models\CookieWorker.cs" />
-    <Compile Include="Models\DTO\ReturnCodes.cs" />
     <Compile Include="Models\LogModel.cs" />
     <Compile Include="Models\LogStore.cs" />
     <Compile Include="Models\LogWriter.cs" />
@@ -125,6 +124,7 @@
     <Compile Include="Models\SessionStore.cs" />
     <Compile Include="Models\SignalrHub\IResponseProcessor.cs" />
     <Compile Include="Models\SignalrHub\ResponseHub.cs" />
+    <Compile Include="Models\Tools\RequestBuffer.cs" />
     <Compile Include="Models\Tools\XAttribute_EXT.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -154,6 +154,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\zapad.Model\zapad.Model.csproj">
+      <Project>{7BF5BA8F-136B-4C97-919A-A3355A1F6D32}</Project>
+      <Name>zapad.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\zapad.Public.WebInterface\zapad.Public.WebInterface.csproj">
       <Project>{55d2a711-c3f3-4c99-8f33-ea6b24047b0e}</Project>
       <Name>zapad.Public.WebInterface</Name>

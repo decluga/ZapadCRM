@@ -128,6 +128,10 @@
       <Project>{b7823dfe-6807-4e0d-ba0d-7edad2bc8488}</Project>
       <Name>zapad.crm.WebHostCache</Name>
     </ProjectReference>
+    <ProjectReference Include="..\zapad.Model\zapad.Model.csproj">
+      <Project>{7bf5ba8f-136b-4c97-919a-a3355a1f6d32}</Project>
+      <Name>zapad.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

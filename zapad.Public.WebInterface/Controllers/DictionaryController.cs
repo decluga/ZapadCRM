@@ -4,72 +4,61 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml.Linq;
+using zapad.Model.DTO.Dictionaries;
+using zapad.Model.Tools;
 using zapad.Public.WebInterface.Models.Authorization;
 using zapad.Public.WebInterface.Models.Tools;
-using zapad.Public.WebInterface.Models.ViewModels;
 
 namespace zapad.Public.WebInterface.Controllers
 {
     public class DictionaryController : BaseController
     {
-        #region Справочник "Периоды звоноков"
-        #region /GetCallPeriods: Получение справочника периодов звонков
+        #region Справочник "Периоды событий"
+        #region /GetEventPeriods: Получение справочника периодов события
         /// <summary>
-        /// Сущность периода звонков:
+        /// Сущность периода:
         /// Id, Name, Timespan
         /// </summary>
         /// <returns></returns>
-        [Route("GetCallPeriods"), HttpGet, PageID(201)]
-        public JsonResult GetCallPeriods()
+        [Route("GetEventPeriods"), HttpGet, PageID(201)]
+        public JsonResult GetEventPeriods()
         {
-            var response = WebHostCache.Current.GetResponse<XElement>(@"api\Dictionary\GetCallPeriods?sessionKey=" + session.Key.ToString());
-            var result = response.Elements("CallPeriod").Select(x => new DictionaryDTO<Int32>()
-            {
-                Id = x.Element("Id").getValue(0),
-                Name = x.Element("Name").getValue("")
-            }).ToList();
+            var response = WebHostCache.Current.GetResponse<XElement>(@"api\Dictionary\GetEventPeriods?sessionKey=" + session.Key.ToString());
+            var result = EventPeriodDTO.ArrayFromXElement(response).ToList();
             return Json(new { rc = 0, Items = result }, JsonRequestBehavior.AllowGet);
         }
         #endregion
         #endregion
 
-        #region Справочник "Статусы звонка"
-        #region /GetCallStatuses: Получение справочника статусов звонка
+        #region Справочник "Статусы событий"
+        #region /GetEventStatuses: Получение справочника статусов события
         /// <summary>
-        /// Сущность статусов звонка:
+        /// Сущность статусов события:
         /// Id, Name
         /// </summary>
         /// <returns></returns>
-        [Route("GetCallStatuses"), HttpGet, PageID(202)]
-        public JsonResult GetCallStatuses()
+        [Route("GetEventStatuses"), HttpGet, PageID(202)]
+        public JsonResult GetEventStatuses()
         {
-            var response = WebHostCache.Current.GetResponse<XElement>(@"api\Dictionary\GetCallStatuses?sessionKey=" + session.Key.ToString());
-            var result = response.Elements("CallStatus").Select(x => new DictionaryDTO<Int32>()
-            {
-                Id = x.Element("Id").getValue(0),
-                Name = x.Element("Name").getValue("")
-            }).ToList();
+            var response = WebHostCache.Current.GetResponse<XElement>(@"api\Dictionary\GetEventStatuses?sessionKey=" + session.Key.ToString());
+            var result = EventStatusDTO.ArrayFromXElement(response).ToList();
             return Json(new { rc = 0, Items = result }, JsonRequestBehavior.AllowGet);
         }
         #endregion
         #endregion
 
-        #region Справочник "Тип результата звонка"
-        #region /GetCallResultTypes: Получение справочника типов результата звонка
+        #region Справочник "Тип результата события"
+        #region /GetEventResultTypes: Получение справочника типов результата события
         /// <summary>
-        /// Сущность типа результатов звонка:
+        /// Сущность типа результатов:
         /// Id, Name
         /// </summary>
         /// <returns></returns>
-        [Route("GetCallResultTypes"), HttpGet, PageID(203)]
-        public JsonResult GetCallResultTypes()
+        [Route("GetEventResultTypes"), HttpGet, PageID(203)]
+        public JsonResult GetEventResultTypes()
         {
-            var response = WebHostCache.Current.GetResponse<XElement>(@"api\Dictionary\GetCallResultTypes?sessionKey=" + session.Key.ToString());
-            var result = response.Elements("CallResultType").Select(x => new DictionaryDTO<Int32>()
-            {
-                Id = x.Element("Id").getValue(0),
-                Name = x.Element("Name").getValue("")
-            }).ToList();
+            var response = WebHostCache.Current.GetResponse<XElement>(@"api\Dictionary\GetEventResultTypes?sessionKey=" + session.Key.ToString());
+            var result = EventResultTypeDTO.ArrayFromXElement(response).ToList();
             return Json(new { rc = 0, Items = result }, JsonRequestBehavior.AllowGet);
         }
         #endregion
@@ -86,11 +75,19 @@ namespace zapad.Public.WebInterface.Controllers
         public JsonResult GetDepartments()
         {
             var response = WebHostCache.Current.GetResponse<XElement>(@"api\Dictionary\GetDepartments?sessionKey=" + session.Key.ToString());
-            var result = response.Elements("Department").Select(x => new DictionaryDTO<Guid>()
-            {
-                Id = new Guid(x.Element("Id").getValue("")),
-                Name = x.Element("Name").getValue("")
-            }).ToList();
+            var result = DepartmentDTO.ArrayFromXElement(response).ToList();
+            return Json(new { rc = 0, Items = result }, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+        #endregion
+
+        #region Справочник "Сотрудники"
+        #region /GetPeoples: Получение списка пользователей
+        [Route("GetPeoples"), HttpGet, PageID(103)]
+        public JsonResult GetPeoples()
+        {
+            var response = WebHostCache.Current.GetResponse<XElement>(@"api\Dictionary\GetPeoples?sessionKey=" + session.Key.ToString());
+            var result = PeopleDTO.ArrayFromXElement(response).ToList();
             return Json(new { rc = 0, Items = result }, JsonRequestBehavior.AllowGet);
         }
         #endregion

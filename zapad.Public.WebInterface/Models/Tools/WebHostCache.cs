@@ -118,6 +118,7 @@ namespace zapad.Public.WebInterface.Models.Tools
             finally
             {
                 // Завершаем обработку запроса
+                client.WaitHandlers[requestId].Dispose();
                 client.WaitHandlers.Remove(requestId);
                 client.RequestResults.Remove(requestId);
             }            
